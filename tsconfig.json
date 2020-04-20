@@ -14,7 +14,13 @@
     "lib": [
       "es2018",
       "dom"
-    ]
+    ],
+    "paths": {
+      "ngx-mat-dynamic-table": [
+        "dist/ngx-mat-dynamic-table/ngx-mat-dynamic-table",
+        "dist/ngx-mat-dynamic-table"
+      ]
+    }
   },
   "angularCompilerOptions": {
     "fullTemplateTypeCheck": true,

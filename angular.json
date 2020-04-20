@@ -123,6 +123,46 @@
           }
         }
       }
+    },
+    "ngx-mat-dynamic-table": {
+      "projectType": "library",
+      "root": "projects/ngx-mat-dynamic-table",
+      "sourceRoot": "projects/ngx-mat-dynamic-table/src",
+      "prefix": "ngx-mat",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-ng-packagr:build",
+          "options": {
+            "tsConfig": "projects/ngx-mat-dynamic-table/tsconfig.lib.json",
+            "project": "projects/ngx-mat-dynamic-table/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/ngx-mat-dynamic-table/tsconfig.lib.prod.json"
+            }
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/ngx-mat-dynamic-table/src/test.ts",
+            "tsConfig": "projects/ngx-mat-dynamic-table/tsconfig.spec.json",
+            "karmaConfig": "projects/ngx-mat-dynamic-table/karma.conf.js"
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "projects/ngx-mat-dynamic-table/tsconfig.lib.json",
+              "projects/ngx-mat-dynamic-table/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        }
+      }
     }},
   "defaultProject": "ngx-mat-dynamic-table-demo"
 }
