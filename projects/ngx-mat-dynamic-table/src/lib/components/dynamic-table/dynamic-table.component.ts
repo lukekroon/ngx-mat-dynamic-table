@@ -161,8 +161,6 @@ export class DynamicTableComponent<T> implements OnChanges, AfterViewInit {
   }
 
   displayColumnsChanged(event: MatSelectChange): void {
-    console.log(this.dataSource.paginator)
-    console.log(this.dataSource.sort)
     this.displayedColumns = event.value.map(c => c.columnDef);
   }
 }
