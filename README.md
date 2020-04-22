@@ -1,27 +1,19 @@
 # NgxMatDynamicTableDemo
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 9.1.0.
+## How to run the demo application
 
-## Development server
+1. Build the library with `ng build ngx-mat-dynamic-table`
+2. A new `dist` folder will appear with the library.
+3. Run `ng serve` to start the demo.
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+## How to contribute
 
-## Code scaffolding
+1. In one terminal build the library with `ng build ngx-mat-dynamic-table --watch`. This command will check for any file changes in the library directory.
+2. In another terminal run `ng serve` to test your changes to the library.
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+## Install Locally to your own project
 
-## Build
+1. Build the library with `ng build ngx-mat-dynamic-table`.
+2. From your own project, run `npm install /path/to/library/dist`.
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
 
-## Running unit tests
-
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).

@@ -1,0 +1,10 @@
+<div *ngIf="tableData$" style="margin-top: 15px;">
+    <div *ngIf="(tableData$ | async) as tableData; else loading">
+        <ngx-mat-dynamic-table [columns]="columns" [tableData]="tableData" [rowClick]="rowClick"
+            (rowClicked)="rowClicked.emit($event)" [fileName]="fileName" [export]="export" [filter]="filter"
+            [multiple]="multiple" (selectedRows)="selectedRows.emit($event)"></ngx-mat-dynamic-table>
+    </div>
+    <ng-template #loading>
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    </ng-template>
+</div>
