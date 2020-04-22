@@ -1,8 +1,14 @@
-<div fxLayout="row wrap" fxLayoutAlign="start center">
-    <mat-form-field *ngIf="filter" fxFlex.lt-sm="100" fxFlex.gt-sm="33">
+<div fxLayout="row wrap" fxLayoutAlign="start center" fxLayoutGap="10px">
+    <mat-form-field appearance="outline" *ngIf="filter" fxFlex.lt-sm="100" fxFlex.gt-sm="33">
         <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
     </mat-form-field>
     <span fxFlex.gt-sm></span>
+    <mat-form-field appearance="outline">
+        <mat-label>Columns</mat-label>
+        <mat-select [formControl]="columnsToShow" multiple (selectionChange)="displayColumnsChanged($event)">
+            <mat-option *ngFor="let column of columns" [value]="column">{{column.columnTitle}}</mat-option>
+        </mat-select>
+    </mat-form-field>
     <ngx-mat-xlsx-table-export *ngIf="export && !selection.hasValue()" [data]="exportData" [fileName]="fileName"
         [headers]="xlsxHeaders">
     </ngx-mat-xlsx-table-export>

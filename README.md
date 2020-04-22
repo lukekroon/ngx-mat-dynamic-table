@@ -15,5 +15,3 @@
 
 1. Build the library with `ng build ngx-mat-dynamic-table`.
 2. From your own project, run `npm install /path/to/library/dist`.
-
-

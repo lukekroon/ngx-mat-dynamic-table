@@ -25,6 +25,27 @@ export class AppComponent implements OnInit {
       columnDef: 'number',
       columnTitle: 'Number',
     },
+    {
+      columnDef: 'subscribed',
+      columnTitle: 'Subscribed',
+      type: 'icon',
+      icons: [{
+        value: true,
+        matIcon: 'done',
+        color: '#0a7d00',
+        matTooltip: 'Subscribed'
+      },{
+        value: false,
+        matIcon: 'clear',
+        color: '#fc0303',
+        matTooltip: 'Subscribed'
+      }]
+    },
+    {
+      columnDef: 'signupDate',
+      columnTitle: 'Date',
+      hidden: true
+    }
   ]
 
   constructor(private dataService: DataService) { }

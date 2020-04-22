@@ -1,10 +1,12 @@
-import { Component, OnInit, Input, Output, EventEmitter, ViewChild, Inject, LOCALE_ID, SimpleChanges, OnChanges } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ViewChild, Inject, LOCALE_ID, SimpleChanges, OnChanges, AfterViewInit } from '@angular/core';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { MatPaginator } from '@angular/material/paginator';
 import { SelectionModel } from '@angular/cdk/collections';
 import { formatDate } from '@angular/common';
 import { MatCheckboxChange } from '@angular/material/checkbox';
+import { FormControl } from '@angular/forms';
+import { MatSelectChange } from '@angular/material/select';
 
 export interface DynamicTableColumnDefinition {
   columnDef: string,
@@ -14,6 +16,7 @@ export interface DynamicTableColumnDefinition {
   icons?: { value: any, matIcon: string, color: string, matTooltip: string }[]
   // Do not set this value, calculated inside generic table component
   totalValue?: number;
+  hidden?: boolean;
 }
 
 @Component({
@@ -21,9 +24,9 @@ export interface DynamicTableColumnDefinition {
   templateUrl: './dynamic-table.component.html',
   styleUrls: ['./dynamic-table.component.css']
 })
-export class DynamicTableComponent<T> implements OnChanges {
+export class DynamicTableComponent<T> implements OnChanges, AfterViewInit {
 
-  @Input() tableData: any[];
+  @Input() tableData: T[];
   @Input() rowClick: boolean;
   @Input() fileName: string;
 
@@ -33,11 +36,11 @@ export class DynamicTableComponent<T> implements OnChanges {
   @Input() filter: boolean = false;
   @Input() multiple: boolean = false;
 
-  @Output() rowClicked: EventEmitter<any> = new EventEmitter<any>();
+  @Output() rowClicked: EventEmitter<T> = new EventEmitter<T>();
 
-  @Output() selectedRows: EventEmitter<any> = new EventEmitter<any>();
+  @Output() selectedRows: EventEmitter<T[]> = new EventEmitter<T[]>();
 
-  @ViewChild(MatTable) table!: MatTable<any>;
+  @ViewChild(MatTable) table: MatTable<T>;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
@@ -45,13 +48,15 @@ export class DynamicTableComponent<T> implements OnChanges {
 
   displayedColumns: string[] = [];
 
-  dataSource: MatTableDataSource<any>;
+  dataSource: MatTableDataSource<T>;
 
   totalsRowVisible: boolean = false;
 
   xlsxHeaders: any;
 
-  exportData: any[];
+  exportData: T[];
+
+  columnsToShow = new FormControl();
 
   constructor(@Inject(LOCALE_ID) private locale: string) { }
 
@@ -62,8 +67,10 @@ export class DynamicTableComponent<T> implements OnChanges {
       this.totalsRowVisible = false;
       if (this.multiple) this.displayedColumns.push('select');
       this.columns.forEach(col => {
-        this.displayedColumns.push(col.columnDef);
+        if (!col.hidden)
+          this.displayedColumns.push(col.columnDef);
       });
+      this.columnsToShow.setValue(this.columns.filter(c => !c.hidden))
       this.updateColumnTotals();
       this.updateXLSXHeaders();
     }
@@ -84,11 +91,13 @@ export class DynamicTableComponent<T> implements OnChanges {
       }
 
       this.dataSource = new MatTableDataSource(this.tableData);
-      this.dataSource.paginator = this.paginator;
-      this.dataSource.sort = this.sort;
-
       this.updateColumnTotals();
     }
+  }
+
+  ngAfterViewInit(): void {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
   }
 
   updateXLSXHeaders() {
@@ -121,7 +130,7 @@ export class DynamicTableComponent<T> implements OnChanges {
   }
 
   _rowClicked(row: any): void {
-    if(!this.rowClick)
+    if (!this.rowClick)
       return;
     this.rowClicked.emit(row);
   }
@@ -149,5 +158,11 @@ export class DynamicTableComponent<T> implements OnChanges {
 
   emitSelected(): void {
     this.selectedRows.emit(this.selection.selected);
+  }
+
+  displayColumnsChanged(event: MatSelectChange): void {
+    console.log(this.dataSource.paginator)
+    console.log(this.dataSource.sort)
+    this.displayedColumns = event.value.map(c => c.columnDef);
   }
 }
