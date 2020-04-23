@@ -79,13 +79,17 @@ export class DynamicTableComponent<T> implements OnChanges, AfterViewInit {
 
     if (changes.tableData.currentValue) {
       this.dataSource = new MatTableDataSource(this.tableData);
+      this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
       this.updateColumnTotals();
     }
   }
 
   ngAfterViewInit(): void {
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
+    if (this.dataSource) {
+      this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
+    }
   }
 
   updateXLSXHeaders() {
@@ -99,8 +103,7 @@ export class DynamicTableComponent<T> implements OnChanges, AfterViewInit {
     this.columns.map(col => {
       if (col.total && this.tableData.length > 0) {
         this.totalsRowVisible = true;
-        this.table.removeFooterRowDef(null);
-
+        if (this.table) this.table.removeFooterRowDef(null);
         col.totalValue = this.tableData.map(t => t[col.columnDef]).reduce((acc, value) => acc + value, 0);
         if (isNaN(col.totalValue))
           col.totalValue = 0;
