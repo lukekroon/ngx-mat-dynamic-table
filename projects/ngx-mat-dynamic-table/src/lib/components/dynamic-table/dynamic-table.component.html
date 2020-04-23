@@ -39,9 +39,9 @@
                     <span *ngSwitchCase="'number'">
                         {{ row[column.columnDef] | number  }}
                     </span>
-                    <p *ngSwitchCase="'date'">
+                    <span *ngSwitchCase="'date'">
                         {{ row[column.columnDef] | date: 'd/M/yy, HH:mm' }}
-                    </p>
+                    </span>
                     <span *ngSwitchCase="'icon'">
                         <ng-container *ngFor="let icon of column.icons">
                             <mat-icon *ngIf="icon.value === row[column.columnDef]" [style.color]="icon.color"
@@ -49,9 +49,9 @@
                             </mat-icon>
                         </ng-container>
                     </span>
-                    <p *ngSwitchDefault>
+                    <span *ngSwitchDefault>
                         {{ row[column.columnDef] }}
-                    </p>
+                    </span>
                 </span>
             </td>
 

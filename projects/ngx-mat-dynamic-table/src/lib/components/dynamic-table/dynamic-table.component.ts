@@ -23,7 +23,7 @@ export interface DynamicTableColumnDefinition {
 @Component({
   selector: 'ngx-mat-dynamic-table',
   templateUrl: './dynamic-table.component.html',
-  styleUrls: ['./dynamic-table.component.css']
+  styleUrls: ['./dynamic-table.component.scss']
 })
 export class DynamicTableComponent<T> implements OnChanges, AfterViewInit {
 
