@@ -1,17 +1,17 @@
 <div fxLayout="row wrap" fxLayoutAlign="start center" fxLayoutGap="10px">
-    <mat-form-field appearance="outline" *ngIf="filter" fxFlex.lt-sm="100" fxFlex.gt-sm="33">
+    <mat-form-field appearance="outline" *ngIf="filter" fxFlex.gt-xs="33" fxFlex.xs="100">
         <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
     </mat-form-field>
-    <span fxFlex.gt-sm></span>
-    <mat-form-field appearance="outline">
+    <span fxFlex.gt-xs></span>
+    <mat-form-field *ngIf="optionalColumns" appearance="outline">
         <mat-label>Columns</mat-label>
         <mat-select [formControl]="columnsToShow" multiple (selectionChange)="displayColumnsChanged($event)">
             <mat-option *ngFor="let column of columns" [value]="column">{{column.columnTitle}}</mat-option>
         </mat-select>
     </mat-form-field>
-    <ngx-mat-xlsx-table-export *ngIf="export && !selection.hasValue()" [data]="exportData" [fileName]="fileName"
-        [headers]="xlsxHeaders">
-    </ngx-mat-xlsx-table-export>
+    <button *ngIf="export" mat-stroked-button color="primary" (click)="eportToExcell()">
+        <mat-icon>import_export</mat-icon> Export
+    </button>
     <span *ngIf="selection.selected.length > 0" class="mat-caption">{{selection.selected.length}} values selected</span>
 </div>
 <div class="mat-elevation-z1 m-t-15">

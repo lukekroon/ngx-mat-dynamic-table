@@ -34,7 +34,7 @@ export class AppComponent implements OnInit {
         matIcon: 'done',
         color: '#0a7d00',
         matTooltip: 'Subscribed'
-      },{
+      }, {
         value: false,
         matIcon: 'clear',
         color: '#fc0303',
@@ -56,5 +56,9 @@ export class AppComponent implements OnInit {
 
   rowData(row: any): void {
     console.log(row);
+  }
+
+  selectedRows(rows: any[]): void {
+    console.log(rows);
   }
 }

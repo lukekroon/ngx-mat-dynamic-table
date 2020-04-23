@@ -7,6 +7,7 @@ import { formatDate } from '@angular/common';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { FormControl } from '@angular/forms';
 import { MatSelectChange } from '@angular/material/select';
+import { XlsxExportService } from '../xlsx-table-export/service/xlsx-export.service';
 
 export interface DynamicTableColumnDefinition {
   columnDef: string,
@@ -32,9 +33,10 @@ export class DynamicTableComponent<T> implements OnChanges, AfterViewInit {
 
   @Input() columns: DynamicTableColumnDefinition[];
 
-  @Input() export: boolean = false;
-  @Input() filter: boolean = false;
-  @Input() multiple: boolean = false;
+  @Input() export: boolean = false; // Enable export for this table
+  @Input() filter: boolean = false; // Enable filter for this table
+  @Input() multiple: boolean = false; // Allow multiple select for this table
+  @Input() optionalColumns: boolean = false; // Show or hide columns
 
   @Output() rowClicked: EventEmitter<T> = new EventEmitter<T>();
 
@@ -58,7 +60,8 @@ export class DynamicTableComponent<T> implements OnChanges, AfterViewInit {
 
   columnsToShow = new FormControl();
 
-  constructor(@Inject(LOCALE_ID) private locale: string) { }
+  constructor(@Inject(LOCALE_ID) private locale: string,
+    private xlsxExportService: XlsxExportService) { }
 
   ngOnChanges(changes: SimpleChanges): void {
     // Add headers to of data to display in table
@@ -72,24 +75,9 @@ export class DynamicTableComponent<T> implements OnChanges, AfterViewInit {
       });
       this.columnsToShow.setValue(this.columns.filter(c => !c.hidden))
       this.updateColumnTotals();
-      this.updateXLSXHeaders();
     }
 
     if (changes.tableData.currentValue) {
-
-      // Format dates for exporting, temp
-      this.exportData = this.tableData.map(a => Object.assign({}, a));
-      // If the columns contain a date
-      let dateColumns = this.columns.filter(e => e.type === 'date')
-      if (dateColumns && dateColumns.length > 0) {
-        this.exportData = this.exportData.map(td => {
-          dateColumns.forEach(col => {
-            td[col.columnDef] = formatDate(td[col.columnDef], 'd/M/yy, HH:mm', this.locale);
-          });
-          return td;
-        })
-      }
-
       this.dataSource = new MatTableDataSource(this.tableData);
       this.updateColumnTotals();
     }
@@ -102,7 +90,7 @@ export class DynamicTableComponent<T> implements OnChanges, AfterViewInit {
 
   updateXLSXHeaders() {
     this.xlsxHeaders = {}
-    this.columns.forEach(c => {
+    this.columnsToShow.value.forEach(c => {
       this.xlsxHeaders[c.columnDef] = c.columnTitle
     })
   }
@@ -162,5 +150,33 @@ export class DynamicTableComponent<T> implements OnChanges, AfterViewInit {
 
   displayColumnsChanged(event: MatSelectChange): void {
     this.displayedColumns = event.value.map(c => c.columnDef);
+    if (this.multiple) this.displayedColumns.unshift('select');
+  }
+
+  eportToExcell(): void {
+    this.updateXLSXHeaders();
+    this.formatExportData();
+    this.xlsxExportService.exportExcel(this.exportData, this.xlsxHeaders, this.fileName ? this.fileName : 'Export');
+  }
+
+  formatExportData(): void {
+    // Format dates for exporting, temp
+    if (this.selection.hasValue()) {
+      // Export selected data
+      this.exportData = this.selection.selected.map(a => Object.assign({}, a));
+    } else {
+      // Export filtered data and sorted
+      this.exportData = this.dataSource.sortData(this.dataSource.filteredData, this.dataSource.sort).map(a => Object.assign({}, a));
+    }
+    // If the columns contain a date
+    let dateColumns = this.columnsToShow.value.filter(e => e.type === 'date')
+    if (dateColumns && dateColumns.length > 0) {
+      this.exportData = this.exportData.map(td => {
+        dateColumns.forEach(col => {
+          td[col.columnDef] = formatDate(td[col.columnDef], 'd/M/yy, HH:mm', this.locale);
+        });
+        return td;
+      })
+    }
   }
 }
