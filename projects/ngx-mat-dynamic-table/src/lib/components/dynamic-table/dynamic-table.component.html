@@ -29,6 +29,9 @@
                     [checked]="selection.isSelected(row)">
                 </mat-checkbox>
             </td>
+            <ng-container *ngIf="totalsRowVisible">
+                <td mat-footer-cell *matFooterCellDef></td>
+            </ng-container>
         </ng-container>
         <ng-container *ngFor="let column of columns" [matColumnDef]="column.columnDef">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>
@@ -37,20 +40,20 @@
             <td mat-cell *matCellDef="let row">
                 <span [ngSwitch]="column.type">
                     <span *ngSwitchCase="'number'">
-                        {{ row[column.columnDef] | number  }}
+                        {{ lodashGet(row,column.columnDef) | number  }}
                     </span>
                     <span *ngSwitchCase="'date'">
-                        {{ row[column.columnDef] | date: 'd/M/yy, HH:mm' }}
+                        {{ lodashGet(row,column.columnDef) | date: 'd/M/yy, HH:mm' }}
                     </span>
                     <span *ngSwitchCase="'icon'">
                         <ng-container *ngFor="let icon of column.icons">
-                            <mat-icon *ngIf="icon.value === row[column.columnDef]" [style.color]="icon.color"
+                            <mat-icon *ngIf="icon.value === lodashGet(row,column.columnDef)" [style.color]="icon.color"
                                 [matTooltip]="icon.matTooltip">{{icon.matIcon}}
                             </mat-icon>
                         </ng-container>
                     </span>
                     <span *ngSwitchDefault>
-                        {{ row[column.columnDef] }}
+                        {{ lodashGet(row,column.columnDef) }}
                     </span>
                 </span>
             </td>

@@ -5,6 +5,7 @@
       <mat-card-subtitle>Demo</mat-card-subtitle>
     </mat-card-header>
     <mat-card-content>
+      <span class="mat-h2">Multiple Select</span>
       <ngx-mat-dynamic-table-container [tableData$]="data$" [columns]="columns" filter="true" export="true"
         (rowClicked)="rowData($event)" rowClick="true" fileName="Test" optionalColumns="true" multiple="true"
         (selectedRows)="selectedRows($event)"></ngx-mat-dynamic-table-container>

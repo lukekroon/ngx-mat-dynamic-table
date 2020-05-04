@@ -45,6 +45,12 @@ export class AppComponent implements OnInit {
       columnDef: 'signupDate',
       columnTitle: 'Date',
       hidden: true
+    },
+    {
+      columnDef: 'money.netWorth',
+      columnTitle: 'Net Worth',
+      type: 'number',
+      total: true
     }
   ]
 

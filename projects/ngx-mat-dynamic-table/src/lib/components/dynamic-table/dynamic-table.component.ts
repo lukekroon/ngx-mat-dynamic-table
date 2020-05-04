@@ -8,6 +8,7 @@ import { MatCheckboxChange } from '@angular/material/checkbox';
 import { FormControl } from '@angular/forms';
 import { MatSelectChange } from '@angular/material/select';
 import { XlsxExportService } from '../xlsx-table-export/service/xlsx-export.service';
+import { get as _get, set as _set } from 'lodash';
 
 export interface DynamicTableColumnDefinition {
   columnDef: string,
@@ -60,6 +61,8 @@ export class DynamicTableComponent<T> implements OnChanges, AfterViewInit {
 
   columnsToShow = new FormControl();
 
+  lodashGet = _get;
+
   constructor(@Inject(LOCALE_ID) private locale: string,
     private xlsxExportService: XlsxExportService) { }
 
@@ -81,6 +84,7 @@ export class DynamicTableComponent<T> implements OnChanges, AfterViewInit {
       this.dataSource = new MatTableDataSource(this.tableData);
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
+      this.dataSource.sortingDataAccessor = (data, attribute) => _get(data, attribute);
       this.updateColumnTotals();
     }
   }
@@ -89,6 +93,7 @@ export class DynamicTableComponent<T> implements OnChanges, AfterViewInit {
     if (this.dataSource) {
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
+      this.dataSource.sortingDataAccessor = (data, attribute) => _get(data, attribute);
     }
   }
 
@@ -104,7 +109,7 @@ export class DynamicTableComponent<T> implements OnChanges, AfterViewInit {
       if (col.total && this.tableData.length > 0) {
         this.totalsRowVisible = true;
         if (this.table) this.table.removeFooterRowDef(null);
-        col.totalValue = this.tableData.map(t => t[col.columnDef]).reduce((acc, value) => acc + value, 0);
+        col.totalValue = this.tableData.map(t => _get(t, col.columnDef)).reduce((acc, value) => acc + value, 0);
         if (isNaN(col.totalValue))
           col.totalValue = 0;
       }
@@ -176,7 +181,7 @@ export class DynamicTableComponent<T> implements OnChanges, AfterViewInit {
     if (dateColumns && dateColumns.length > 0) {
       this.exportData = this.exportData.map(td => {
         dateColumns.forEach(col => {
-          td[col.columnDef] = formatDate(td[col.columnDef], 'd/M/yy, HH:mm', this.locale);
+          _set(td, col.columnDef, formatDate(_get(td, col.columnDef), 'd/M/yy, HH:mm', this.locale));
         });
         return td;
       })
