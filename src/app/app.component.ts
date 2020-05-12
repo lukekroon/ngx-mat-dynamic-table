@@ -57,7 +57,8 @@ export class AppComponent implements OnInit {
   constructor(private dataService: DataService) { }
 
   ngOnInit(): void {
-    this.data$ = this.dataService.getObservable();
+    this.data$ = this.dataService.getObservableClass();
+    // this.data$ = this.dataService.getObservableObjects();
   }
 
   rowData(row: any): void {

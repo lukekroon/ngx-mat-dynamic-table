@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { delay } from 'rxjs/operators';
+import { delay, map } from 'rxjs/operators';
+import { User } from './User';
 
 @Injectable({
   providedIn: 'root'
@@ -67,9 +68,16 @@ export class DataService {
 
   constructor() { }
 
-  getObservable(): Observable<any[]> {
+  getObservableClass(): Observable<User[]> {
     return of(this.data).pipe(
-      delay(2000)
+      map(u => u.map(user => new User(user))),
+      delay(500)
+    );
+  }
+
+  getObservableObjects(): Observable<User[]> {
+    return of(this.data).pipe(
+      delay(500)
     );
   }
 }

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import * as FileSaver from 'file-saver';
 import * as XLSX from 'xlsx';
-import { pick, map, partialRight, mapKeys, values } from 'lodash';
+import { pick, map, get as _get, partialRight, mapKeys, values } from 'lodash';
 
 @Injectable({
   providedIn: 'root'
@@ -29,9 +29,14 @@ export class XlsxExportService {
 
   renameKeys(jsonData: any[], headers: any): any[] {
     return jsonData.map(j => {
-      return mapKeys(j, function (value, key) {
-        return headers[key];
+      let renamed = {};
+      // Get all the keys of the headers
+      Object.keys(headers).forEach(key => {
+        // make the header value the new key of the renamed object.
+        // use the key of the header with lodash get function to get nested objects.
+        renamed[headers[key]] = _get(j, key);
       });
+      return renamed;
     })
   }
 
