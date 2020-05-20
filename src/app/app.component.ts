@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { DataService } from './services/data.service';
 import { Observable } from 'rxjs';
 import { DynamicTableColumnDefinition } from 'ngx-mat-dynamic-table';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
@@ -44,20 +45,30 @@ export class AppComponent implements OnInit {
     {
       columnDef: 'signupDate',
       columnTitle: 'Date',
+      type: 'date',
+      dateFormat: 'yyyy',
       hidden: true
     },
     {
       columnDef: 'money.netWorth',
       columnTitle: 'Net Worth',
       type: 'number',
-      total: true
+      total: true,
+      cellClassKey: 'netWorthClass'
     }
   ]
 
   constructor(private dataService: DataService) { }
 
   ngOnInit(): void {
-    this.data$ = this.dataService.getObservableClass();
+    this.data$ = this.dataService.getObservableClass().pipe(
+      map(users => {
+        return users.map(user => {
+          user.netWorthClass = user.money.netWorth > 2000 ? 'a-lot-of-money' : 'broke';
+          return user;
+        })
+      })
+    );
     // this.data$ = this.dataService.getObservableObjects();
   }
 

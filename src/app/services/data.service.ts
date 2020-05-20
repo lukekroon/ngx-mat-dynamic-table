@@ -13,7 +13,7 @@ export class DataService {
       name: 'Luke',
       surname: '333',
       number: '0820000000',
-      signupDate: '2020/01/21',
+      signupDate: new Date('2019/01/22'),
       subscribed: true,
       money: {
         netWorth: 2313
@@ -22,7 +22,7 @@ export class DataService {
       name: 'Piet',
       surname: 'Aaa',
       number: '0820000000',
-      signupDate: '2020/01/22',
+      signupDate: new Date('2001/01/22'),
       subscribed: false,
       money: {
         netWorth: 23554
@@ -31,7 +31,7 @@ export class DataService {
       name: '1 X',
       surname: 'BBB bbb',
       number: '0820000000',
-      signupDate: '2020/01/22',
+      signupDate: new Date('2013/01/22'),
       subscribed: false,
       money: {
         netWorth: 2433
@@ -40,7 +40,7 @@ export class DataService {
       name: 'XX aa',
       surname: 'F2',
       number: '0820000000',
-      signupDate: '2020/01/22',
+      signupDate: new Date('2009/01/22'),
       subscribed: false,
       money: {
         netWorth: 123
@@ -49,7 +49,7 @@ export class DataService {
       name: '1 X',
       surname: 'F1',
       number: '0820000000',
-      signupDate: '2020/01/22',
+      signupDate: new Date('1999/01/22'),
       subscribed: false,
       money: {
         netWorth: 32321
@@ -58,7 +58,7 @@ export class DataService {
       name: '1 X',
       surname: 'F10',
       number: '0820000000',
-      signupDate: '2020/01/22',
+      signupDate: new Date('1993/01/22'),
       subscribed: false,
       money: {
         netWorth: 222

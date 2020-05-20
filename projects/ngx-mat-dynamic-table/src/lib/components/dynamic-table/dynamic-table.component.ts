@@ -19,6 +19,8 @@ export interface DynamicTableColumnDefinition {
   // Do not set this value, calculated inside generic table component
   totalValue?: number;
   hidden?: boolean;
+  cellClassKey?: string; // Apply a class to a cell
+  dateFormat?: string;
 }
 
 @Component({
@@ -81,6 +83,7 @@ export class DynamicTableComponent<T> implements OnChanges, AfterViewInit {
     }
 
     if (changes.tableData.currentValue) {
+      console.log(this.tableData);
       this.dataSource = new MatTableDataSource(this.tableData);
       // Search for nested objects
       this.dataSource.filterPredicate = (data, filter: string) => {

@@ -1,11 +1,13 @@
 export class User {
-    
+
     name: string;
     surname: string;
     number: string;
     signupDate: string;
     subscribed: boolean;
     money: Money;
+
+    netWorthClass: string;
 
     constructor(object) {
         Object.assign(this, object);

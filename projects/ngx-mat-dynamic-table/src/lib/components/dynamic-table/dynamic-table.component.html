@@ -37,13 +37,13 @@
             <th mat-header-cell *matHeaderCellDef mat-sort-header>
                 {{ column.columnTitle }}
             </th>
-            <td mat-cell *matCellDef="let row">
-                <span [ngSwitch]="column.type">
+            <td mat-cell *matCellDef="let row" [class]="row[column.cellClassKey]">
+                <ng-container [ngSwitch]="column.type">
                     <span *ngSwitchCase="'number'">
                         {{ lodashGet(row,column.columnDef) | number  }}
                     </span>
                     <span *ngSwitchCase="'date'">
-                        {{ lodashGet(row,column.columnDef) | date: 'd/M/yy, HH:mm' }}
+                        {{ lodashGet(row,column.columnDef) | date: column.dateFormat ? column.dateFormat : 'd/M/yy, HH:mm' }}
                     </span>
                     <span *ngSwitchCase="'icon'">
                         <ng-container *ngFor="let icon of column.icons">
@@ -55,7 +55,7 @@
                     <span *ngSwitchDefault>
                         {{ lodashGet(row,column.columnDef) }}
                     </span>
-                </span>
+                </ng-container>
             </td>
 
             <ng-container *ngIf="totalsRowVisible">
