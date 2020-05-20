@@ -83,7 +83,6 @@ export class DynamicTableComponent<T> implements OnChanges, AfterViewInit {
     }
 
     if (changes.tableData.currentValue) {
-      console.log(this.tableData);
       this.dataSource = new MatTableDataSource(this.tableData);
       // Search for nested objects
       this.dataSource.filterPredicate = (data, filter: string) => {
