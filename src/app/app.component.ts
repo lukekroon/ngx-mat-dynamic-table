@@ -17,10 +17,12 @@ export class AppComponent implements OnInit {
     {
       columnDef: 'name',
       columnTitle: 'Name',
+      search: true
     },
     {
       columnDef: 'surname',
       columnTitle: 'Surname',
+      search: true
     },
     {
       columnDef: 'number',

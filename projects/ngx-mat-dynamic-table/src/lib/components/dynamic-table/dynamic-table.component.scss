@@ -1,3 +1,18 @@
 .row-click {
     cursor: pointer;
 }
+
+.search-button {
+    width: 24px !important;
+    height: 24px !important;
+    line-height: 24px !important;
+ 
+    .mat-icon {
+       width: 18px !important;
+       height: 18px !important;
+       line-height: 18px !important;
+    }
+    .material-icons {
+       font-size: 18px !important;
+    }
+ }

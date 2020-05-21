@@ -1,6 +1,6 @@
 <div fxLayout="row wrap" fxLayoutAlign="start center" fxLayoutGap="10px">
     <mat-form-field appearance="outline" *ngIf="filter" fxFlex.gt-xs="33" fxFlex.xs="100">
-        <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
+        <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Search">
     </mat-form-field>
     <span fxFlex.gt-xs></span>
     <mat-form-field *ngIf="optionalColumns" appearance="outline">
@@ -34,8 +34,24 @@
             </ng-container>
         </ng-container>
         <ng-container *ngFor="let column of columns" [matColumnDef]="column.columnDef">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>
-                {{ column.columnTitle }}
+            <th mat-header-cell *matHeaderCellDef>
+                <div fxLayout="row" fxLayoutAlign="start center">
+                    <span mat-sort-header>
+                        {{ column.columnTitle }}
+                    </span>
+                    <button *ngIf="column.search" class="search-button" mat-icon-button [matMenuTriggerFor]="menu">
+                        <mat-icon>search</mat-icon>
+                    </button>
+                </div>
+                <mat-menu #menu="matMenu">
+                    <div (click)="$event.stopPropagation()" style="padding-right: 8px; padding-left: 8px;">
+                        <mat-form-field>
+                            <input matInput (keyup)="applyColumnFilter($event.target.value, column.columnDef)"
+                                [placeholder]="column.columnTitle">
+                            <mat-hint>Search</mat-hint>
+                        </mat-form-field>
+                    </div>
+                </mat-menu>
             </th>
             <td mat-cell *matCellDef="let row" [class]="row[column.cellClassKey]">
                 <ng-container [ngSwitch]="column.type">

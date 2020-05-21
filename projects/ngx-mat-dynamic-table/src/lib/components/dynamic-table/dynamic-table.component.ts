@@ -14,6 +14,7 @@ export interface DynamicTableColumnDefinition {
   columnDef: string,
   columnTitle: string,
   type?: string;
+  search?: boolean;
   total?: boolean
   icons?: { value: any, matIcon: string, color: string, matTooltip: string }[]
   // Do not set this value, calculated inside generic table component
@@ -86,13 +87,18 @@ export class DynamicTableComponent<T> implements OnChanges, AfterViewInit {
       this.dataSource = new MatTableDataSource(this.tableData);
       // Search for nested objects
       this.dataSource.filterPredicate = (data, filter: string) => {
-        const accumulator = (currentTerm, key) => {
-          return this.nestedFilterCheck(currentTerm, data, key);
-        };
-        const dataStr = Object.keys(data).reduce(accumulator, '').toLowerCase();
+        const searchCriteria = filter.split(',');
+        let dataString = '';
+        const transformedFilter = searchCriteria[0].trim().toLowerCase();
+        if (searchCriteria.length > 1) {
+          // Search in a column
+          dataString = _get(data, searchCriteria[1]);
+        } else {
+          // Search all the columns
+          this.columns.filter(c => c.search).map(c => c.columnDef).forEach(column => dataString += _get(data, column))
+        }
         // Transform the filter by converting it to lowercase and removing whitespace.
-        const transformedFilter = filter.trim().toLowerCase();
-        return dataStr.indexOf(transformedFilter) !== -1;
+        return dataString.toLowerCase().indexOf(transformedFilter) !== -1;
       };
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
@@ -131,7 +137,13 @@ export class DynamicTableComponent<T> implements OnChanges, AfterViewInit {
 
   applyFilter(filterValue: string) {
     this.dataSource.filter = filterValue.trim().toLowerCase();
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
+    }
+  }
 
+  applyColumnFilter(filterValue: string, column: any): void {
+    this.dataSource.filter = `${filterValue},${column}`;
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
