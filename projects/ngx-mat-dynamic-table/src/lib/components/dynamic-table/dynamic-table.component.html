@@ -39,14 +39,17 @@
                     <span mat-sort-header>
                         {{ column.columnTitle }}
                     </span>
-                    <button *ngIf="column.search" class="search-button" mat-icon-button [matMenuTriggerFor]="menu">
+                    <button *ngIf="column.search" class="search-button" mat-icon-button [matMenuTriggerFor]="menu"
+                        (menuOpened)="searchInput.focus()">
+                        <!-- <mat-icon [ngClass]="{'search-active': searchInput.value}">search</mat-icon> -->
                         <mat-icon>search</mat-icon>
                     </button>
                 </div>
                 <mat-menu #menu="matMenu">
                     <div (click)="$event.stopPropagation()" style="padding-right: 8px; padding-left: 8px;">
                         <mat-form-field>
-                            <input matInput (keyup)="applyColumnFilter($event.target.value, column.columnDef)"
+                            <input matInput #searchInput
+                                (keyup)="applyColumnFilter($event.target.value, column.columnDef)"
                                 [placeholder]="column.columnTitle">
                             <mat-hint>Search</mat-hint>
                         </mat-form-field>
@@ -75,7 +78,17 @@
             </td>
 
             <ng-container *ngIf="totalsRowVisible">
-                <td mat-footer-cell *matFooterCellDef> {{column.totalValue | number}} </td>
+                <td mat-footer-cell *matFooterCellDef>
+                    <ng-container *ngIf="column.total">
+                        {{column.totalValue | number}}
+                    </ng-container>
+                    <ng-container *ngIf="column.total && column.average">
+                        &nbsp;|&nbsp;
+                    </ng-container>
+                    <ng-container *ngIf="column.average">
+                        ~{{column.averageValue | number}}
+                    </ng-container>
+                </td>
             </ng-container>
 
         </ng-container>

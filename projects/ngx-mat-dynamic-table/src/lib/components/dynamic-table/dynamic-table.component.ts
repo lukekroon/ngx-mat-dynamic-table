@@ -9,6 +9,8 @@ import { FormControl } from '@angular/forms';
 import { MatSelectChange } from '@angular/material/select';
 import { XlsxExportService } from '../xlsx-table-export/service/xlsx-export.service';
 import { get as _get, set as _set } from 'lodash';
+import { BehaviorSubject, interval } from 'rxjs';
+import { debounce } from 'rxjs/operators';
 
 export interface DynamicTableColumnDefinition {
   columnDef: string,
@@ -16,9 +18,11 @@ export interface DynamicTableColumnDefinition {
   type?: string;
   search?: boolean;
   total?: boolean
+  average?: boolean
   icons?: { value: any, matIcon: string, color: string, matTooltip: string }[]
   // Do not set this value, calculated inside generic table component
   totalValue?: number;
+  averageValue?: number;
   hidden?: boolean;
   cellClassKey?: string; // Apply a class to a cell
   dateFormat?: string;
@@ -66,6 +70,8 @@ export class DynamicTableComponent<T> implements OnChanges, AfterViewInit {
 
   lodashGet = _get;
 
+  filterKeyUp: BehaviorSubject<string> = new BehaviorSubject('');
+
   constructor(@Inject(LOCALE_ID) private locale: string,
     private xlsxExportService: XlsxExportService) { }
 
@@ -98,7 +104,7 @@ export class DynamicTableComponent<T> implements OnChanges, AfterViewInit {
           this.columns.filter(c => c.search).map(c => c.columnDef).forEach(column => dataString += _get(data, column))
         }
         // Transform the filter by converting it to lowercase and removing whitespace.
-        return dataString.toLowerCase().indexOf(transformedFilter) !== -1;
+        return dataString.toString().toLowerCase().indexOf(transformedFilter) !== -1;
       };
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
@@ -112,6 +118,10 @@ export class DynamicTableComponent<T> implements OnChanges, AfterViewInit {
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
       this.dataSource.sortingDataAccessor = (data, attribute) => _get(data, attribute);
+      // calculate totals after key up
+      this.filterKeyUp.pipe(debounce(() => interval(2000))).subscribe(res => {
+        this.updateColumnTotals();
+      });
     }
   }
 
@@ -123,23 +133,30 @@ export class DynamicTableComponent<T> implements OnChanges, AfterViewInit {
   }
 
   updateColumnTotals() {
+    if (!this.dataSource)
+      return;
     this.columns.map(col => {
-      if (col.total && this.tableData.length > 0) {
+      if ((col.total || col.average) && this.dataSource.filteredData.length > 0) {
         this.totalsRowVisible = true;
         if (this.table) this.table.removeFooterRowDef(null);
-        col.totalValue = this.tableData.map(t => _get(t, col.columnDef)).reduce((acc, value) => acc + value, 0);
-        if (isNaN(col.totalValue))
+        col.totalValue = this.dataSource.filteredData.map(t => _get(t, col.columnDef)).reduce((acc, value) => acc + value, 0);
+        if (isNaN(col.totalValue)) {
           col.totalValue = 0;
+          col.averageValue = 0;
+        } else {
+          col.averageValue = col.totalValue / this.dataSource.filteredData.length;
+        }
       }
       return col;
     });
   }
 
   applyFilter(filterValue: string) {
-    this.dataSource.filter = filterValue.trim().toLowerCase();
+    this.dataSource.filter = filterValue;
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
+    this.filterKeyUp.next(filterValue);
   }
 
   applyColumnFilter(filterValue: string, column: any): void {
@@ -147,6 +164,7 @@ export class DynamicTableComponent<T> implements OnChanges, AfterViewInit {
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
+    this.filterKeyUp.next(filterValue);
   }
 
   _rowClicked(row: any): void {

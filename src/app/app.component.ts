@@ -56,6 +56,8 @@ export class AppComponent implements OnInit {
       columnTitle: 'Net Worth',
       type: 'number',
       total: true,
+      average: true,
+      search: true,
       cellClassKey: 'netWorthClass'
     }
   ]
