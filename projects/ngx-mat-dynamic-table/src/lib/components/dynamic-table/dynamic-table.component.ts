@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter, ViewChild, Inject, LOCALE_ID, SimpleChanges, OnChanges, AfterViewInit } from '@angular/core';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
-import { MatSort } from '@angular/material/sort';
+import { MatSort, MatSortable, Sort, SortDirection } from '@angular/material/sort';
 import { MatPaginator } from '@angular/material/paginator';
 import { SelectionModel } from '@angular/cdk/collections';
 import { formatDate } from '@angular/common';
@@ -12,20 +12,24 @@ import { get as _get, set as _set } from 'lodash';
 import { BehaviorSubject, interval } from 'rxjs';
 import { debounce } from 'rxjs/operators';
 
-export interface DynamicTableColumnDefinition {
+export interface DynamicTableColumnDefinition extends DynamicTableColumn {
   columnDef: string,
   columnTitle: string,
-  type?: string;
-  search?: boolean;
-  total?: boolean
-  average?: boolean
-  icons?: { value: any, matIcon: string, color: string, matTooltip: string }[]
-  // Do not set this value, calculated inside generic table component
+  type?: 'number' | 'date' | 'icon'; // number, date, icon
+  search?: boolean; // enable search on this column
+  total?: boolean // calculate the total of this column, only on type number
+  average?: boolean // calculate the average of this column, ony on type number
+  icons?: { value: any, matIcon: string, color: string, matTooltip: string }[] // Icons, only on type icon
+  sort?: 'asc' | 'desc'; // asc of desc, default sort
+  dateFormat?: string; // for dates
+  hidden?: boolean; // Hide this column
+  cellClassKey?: string; // Apply a class to a cell
+}
+
+// For calculations
+interface DynamicTableColumn {
   totalValue?: number;
   averageValue?: number;
-  hidden?: boolean;
-  cellClassKey?: string; // Apply a class to a cell
-  dateFormat?: string;
 }
 
 @Component({
@@ -51,8 +55,18 @@ export class DynamicTableComponent<T> implements OnChanges, AfterViewInit {
   @Output() selectedRows: EventEmitter<T[]> = new EventEmitter<T[]>();
 
   @ViewChild(MatTable) table: MatTable<T>;
-  @ViewChild(MatPaginator) paginator: MatPaginator;
-  @ViewChild(MatSort) sort: MatSort;
+  paginator: MatPaginator;
+  sort: MatSort;
+
+  @ViewChild(MatSort) set matSort(ms: MatSort) {
+    this.sort = ms;
+    this.setDefaultSorting();
+  }
+
+  @ViewChild(MatPaginator) set matPaginator(mp: MatPaginator) {
+    this.paginator = mp;
+    this.setPaging();
+  }
 
   selection = new SelectionModel<T>(true, []);
 
@@ -85,7 +99,7 @@ export class DynamicTableComponent<T> implements OnChanges, AfterViewInit {
         if (!col.hidden)
           this.displayedColumns.push(col.columnDef);
       });
-      this.columnsToShow.setValue(this.columns.filter(c => !c.hidden))
+      this.columnsToShow.setValue(this.columns.filter(c => !c.hidden));
       this.updateColumnTotals();
     }
 
@@ -106,23 +120,14 @@ export class DynamicTableComponent<T> implements OnChanges, AfterViewInit {
         // Transform the filter by converting it to lowercase and removing whitespace.
         return dataString.toString().toLowerCase().indexOf(transformedFilter) !== -1;
       };
-      this.dataSource.paginator = this.paginator;
-      this.dataSource.sort = this.sort;
-      this.dataSource.sortingDataAccessor = (data, attribute) => _get(data, attribute);
       this.updateColumnTotals();
     }
   }
 
   ngAfterViewInit(): void {
-    if (this.dataSource) {
-      this.dataSource.paginator = this.paginator;
-      this.dataSource.sort = this.sort;
-      this.dataSource.sortingDataAccessor = (data, attribute) => _get(data, attribute);
-      // calculate totals after key up
-      this.filterKeyUp.pipe(debounce(() => interval(2000))).subscribe(res => {
-        this.updateColumnTotals();
-      });
-    }
+    this.filterKeyUp.pipe(debounce(() => interval(2000))).subscribe(res => {
+      this.updateColumnTotals();
+    });
   }
 
   updateXLSXHeaders() {
@@ -241,5 +246,25 @@ export class DynamicTableComponent<T> implements OnChanges, AfterViewInit {
       search += data[key];
     }
     return search;
+  }
+
+  setDefaultSorting(): void {
+    setTimeout(() => {
+      this.columns.some(col => {
+        if (col.sort) {
+          const sortState: Sort = { active: col.columnDef, direction: col.sort };
+          this.sort.active = sortState.active;
+          this.sort.direction = col.sort;
+          this.sort.sortChange.emit(sortState);
+          return true;
+        }
+      });
+    })
+    this.dataSource.sort = this.sort;
+    this.dataSource.sortingDataAccessor = (data, attribute) => _get(data, attribute);
+  }
+
+  setPaging(): void {
+    this.dataSource.paginator = this.paginator;
   }
 }

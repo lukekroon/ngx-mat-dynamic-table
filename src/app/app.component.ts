@@ -58,6 +58,7 @@ export class AppComponent implements OnInit {
       total: true,
       average: true,
       search: true,
+      sort: 'asc',
       cellClassKey: 'netWorthClass'
     }
   ]
