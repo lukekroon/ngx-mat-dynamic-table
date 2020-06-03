@@ -8,76 +8,44 @@ import { User } from './User';
 })
 export class DataService {
 
-  private data: any[] = [
-    {
-      name: 'Luke',
-      surname: '333',
-      number: '0820000000',
-      signupDate: new Date('2019/01/22'),
-      subscribed: true,
-      money: {
-        netWorth: 2313
-      }
-    }, {
-      name: 'Piet',
-      surname: 'Aaa',
-      number: '0820000000',
-      signupDate: new Date('2001/01/22'),
-      subscribed: false,
-      money: {
-        netWorth: 23554
-      }
-    }, {
-      name: '1 X',
-      surname: 'BBB bbb',
-      number: '0820000000',
-      signupDate: new Date('2013/01/22'),
-      subscribed: false,
-      money: {
-        netWorth: 2433
-      }
-    }, {
-      name: 'XX aa',
-      surname: 'F2',
-      number: '0820000000',
-      signupDate: new Date('2009/01/22'),
-      subscribed: false,
-      money: {
-        netWorth: 123
-      }
-    }, {
-      name: '1 X',
-      surname: 'F1',
-      number: '0820000000',
-      signupDate: new Date('1999/01/22'),
-      subscribed: false,
-      money: {
-        netWorth: 32321
-      }
-    }, {
-      name: '1 X',
-      surname: 'F10',
-      number: '0820000000',
-      signupDate: new Date('1993/01/22'),
-      subscribed: false,
-      money: {
-        netWorth: 222
-      }
-    }
-  ]
-
   constructor() { }
 
   getObservableClass(): Observable<User[]> {
-    return of(this.data).pipe(
+    return of(this.generateData()).pipe(
       map(u => u.map(user => new User(user))),
       delay(500)
     );
   }
 
   getObservableObjects(): Observable<User[]> {
-    return of(this.data).pipe(
+    return of(this.generateData()).pipe(
       delay(500)
     );
+  }
+
+  generateData(): User[] {
+    let data: User[] = [{
+      name: 'Luke',
+      surname: 'Kroon',
+      number: '+27827022334',
+      signupDate: new Date('2019/01/22'),
+      subscribed: true,
+      money: {
+        netWorth: 50000
+      }
+    }];
+    for (var i = 0; i < 1000; i++) {
+      data.push({
+        name: Math.random().toString(36).substr(2, 10),
+        surname: Math.random().toString(36).substr(2, 10),
+        number: `+27${(Math.floor(Math.random() * 90000000) + 10000000).toString()}`,
+        signupDate: new Date(+(new Date()) - Math.floor(Math.random() * 1000000000000)),
+        subscribed: Math.random() >= 0.5,
+        money: {
+          netWorth: Math.floor(Math.random() * 50000)
+        }
+      })
+    }
+    return data;
   }
 }

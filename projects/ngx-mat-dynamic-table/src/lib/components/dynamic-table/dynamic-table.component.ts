@@ -44,6 +44,7 @@ export class DynamicTableComponent<T> implements OnChanges, AfterViewInit {
   @Input() fileName: string;
 
   @Input() columns: DynamicTableColumnDefinition[];
+  @Input() pageSizeOptions: number[];
 
   @Input() export: boolean = false; // Enable export for this table
   @Input() filter: boolean = false; // Enable filter for this table
@@ -55,18 +56,10 @@ export class DynamicTableComponent<T> implements OnChanges, AfterViewInit {
   @Output() selectedRows: EventEmitter<T[]> = new EventEmitter<T[]>();
 
   @ViewChild(MatTable) table: MatTable<T>;
-  paginator: MatPaginator;
-  sort: MatSort;
 
-  @ViewChild(MatSort) set matSort(ms: MatSort) {
-    this.sort = ms;
-    this.setDefaultSorting();
-  }
+  @ViewChild(MatSort) sort: MatSort;
 
-  @ViewChild(MatPaginator) set matPaginator(mp: MatPaginator) {
-    this.paginator = mp;
-    this.setPaging();
-  }
+  @ViewChild(MatPaginator) paginator: MatPaginator;
 
   selection = new SelectionModel<T>(true, []);
 
@@ -78,13 +71,21 @@ export class DynamicTableComponent<T> implements OnChanges, AfterViewInit {
 
   xlsxHeaders: any;
 
+  // Formatted data for exporting, expecially the dates
   exportData: T[];
 
+  // The hidden columns filtered out
   columnsToShow = new FormControl();
 
+  // Expose lodash get to the HTML
   lodashGet = _get;
 
   filterKeyUp: BehaviorSubject<string> = new BehaviorSubject('');
+
+  // Default sort column definition
+  sortActive: string;
+  // Default sort direction
+  sortDirection: 'asc' | 'desc';
 
   constructor(@Inject(LOCALE_ID) private locale: string,
     private xlsxExportService: XlsxExportService) { }
@@ -100,6 +101,7 @@ export class DynamicTableComponent<T> implements OnChanges, AfterViewInit {
           this.displayedColumns.push(col.columnDef);
       });
       this.columnsToShow.setValue(this.columns.filter(c => !c.hidden));
+      this.setDefaultSorting();
       this.updateColumnTotals();
     }
 
@@ -128,6 +130,9 @@ export class DynamicTableComponent<T> implements OnChanges, AfterViewInit {
     this.filterKeyUp.pipe(debounce(() => interval(2000))).subscribe(res => {
       this.updateColumnTotals();
     });
+    this.dataSource.sort = this.sort;
+    this.dataSource.sortingDataAccessor = (data, attribute) => _get(data, attribute);
+    this.dataSource.paginator = this.paginator;
   }
 
   updateXLSXHeaders() {
@@ -228,7 +233,7 @@ export class DynamicTableComponent<T> implements OnChanges, AfterViewInit {
     if (dateColumns && dateColumns.length > 0) {
       this.exportData = this.exportData.map(td => {
         dateColumns.forEach(col => {
-          _set(td, col.columnDef, formatDate(_get(td, col.columnDef), 'd/M/yy, HH:mm', this.locale));
+          _set(td, col.columnDef, formatDate(_get(td, col.columnDef), col.dateFormat ? col.dateFormat : 'd/M/yyyy, HH:mm', this.locale));
         });
         return td;
       })
@@ -249,22 +254,13 @@ export class DynamicTableComponent<T> implements OnChanges, AfterViewInit {
   }
 
   setDefaultSorting(): void {
-    setTimeout(() => {
-      this.columns.some(col => {
-        if (col.sort) {
-          const sortState: Sort = { active: col.columnDef, direction: col.sort };
-          this.sort.active = sortState.active;
-          this.sort.direction = col.sort;
-          this.sort.sortChange.emit(sortState);
-          return true;
-        }
-      });
-    })
-    this.dataSource.sort = this.sort;
-    this.dataSource.sortingDataAccessor = (data, attribute) => _get(data, attribute);
+    this.columns.some(col => {
+      if (col.sort) {
+        this.sortActive = col.columnDef;
+        this.sortDirection = col.sort;
+        return true;
+      }
+    });
   }
 
-  setPaging(): void {
-    this.dataSource.paginator = this.paginator;
-  }
 }

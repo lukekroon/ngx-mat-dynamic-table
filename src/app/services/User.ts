@@ -3,11 +3,11 @@ export class User {
     name: string;
     surname: string;
     number: string;
-    signupDate: string;
+    signupDate: Date;
     subscribed: boolean;
     money: Money;
 
-    netWorthClass: string;
+    netWorthClass?: string;
 
     constructor(object) {
         Object.assign(this, object);

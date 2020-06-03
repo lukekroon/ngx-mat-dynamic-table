@@ -2,7 +2,8 @@
     <div *ngIf="(tableData$ | async) as tableData; else loading">
         <ngx-mat-dynamic-table [columns]="columns" [tableData]="tableData" [rowClick]="rowClick"
             (rowClicked)="rowClicked.emit($event)" [fileName]="fileName" [export]="export" [filter]="filter"
-            [multiple]="multiple" (selectedRows)="selectedRows.emit($event)" [optionalColumns]="optionalColumns">
+            [multiple]="multiple" (selectedRows)="selectedRows.emit($event)" [optionalColumns]="optionalColumns"
+            [pageSizeOptions]="pageSizeOptions">
         </ngx-mat-dynamic-table>
     </div>
     <ng-template #loading>

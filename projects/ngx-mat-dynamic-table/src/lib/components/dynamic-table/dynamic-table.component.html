@@ -15,7 +15,8 @@
     <span *ngIf="selection.selected.length > 0" class="mat-caption">{{selection.selected.length}} values selected</span>
 </div>
 <div class="mat-elevation-z1 m-t-15">
-    <table mat-table #table [dataSource]="dataSource" matSort style="width: 100%;">
+    <table mat-table #table [dataSource]="dataSource" matSort [matSortActive]="sortActive"
+        [matSortDirection]="sortDirection" style="width: 100%;">
         <!-- Checkbox Column -->
         <ng-container *ngIf="multiple" matColumnDef="select">
             <th mat-header-cell *matHeaderCellDef>
@@ -102,5 +103,6 @@
         </ng-container>
 
     </table>
-    <mat-paginator class="mat-paginator-sticky" [pageSizeOptions]="[100, 150, 200]"></mat-paginator>
+    <mat-paginator class="mat-paginator-sticky" [pageSizeOptions]="pageSizeOptions ? pageSizeOptions: [50, 100, 200]">
+    </mat-paginator>
 </div>
