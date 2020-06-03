@@ -12,7 +12,9 @@
     "angular2",
     "typescript",
     "angular2-material",
-    "angular-material"
+    "angular-material",
+    "mat-table",
+    "material-table"
   ],
   "peerDependencies": {
     "@angular/common": ">=9.0.0",
