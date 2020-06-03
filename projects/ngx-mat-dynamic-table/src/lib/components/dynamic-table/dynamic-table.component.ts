@@ -37,7 +37,7 @@ interface DynamicTableColumn {
   templateUrl: './dynamic-table.component.html',
   styleUrls: ['./dynamic-table.component.scss']
 })
-export class DynamicTableComponent<T> implements OnChanges, AfterViewInit {
+export class DynamicTableComponent<T> implements OnInit, OnChanges, AfterViewInit {
 
   @Input() tableData: T[];
   @Input() rowClick: boolean;
@@ -55,7 +55,7 @@ export class DynamicTableComponent<T> implements OnChanges, AfterViewInit {
 
   @Output() selectedRows: EventEmitter<T[]> = new EventEmitter<T[]>();
 
-  @ViewChild(MatTable) table: MatTable<T>;
+  // @ViewChild(MatTable) table: MatTable<T>;
 
   @ViewChild(MatSort) sort: MatSort;
 
@@ -65,7 +65,7 @@ export class DynamicTableComponent<T> implements OnChanges, AfterViewInit {
 
   displayedColumns: string[] = [];
 
-  dataSource: MatTableDataSource<T>;
+  dataSource: MatTableDataSource<T> = new MatTableDataSource();
 
   totalsRowVisible: boolean = false;
 
@@ -106,22 +106,11 @@ export class DynamicTableComponent<T> implements OnChanges, AfterViewInit {
     }
 
     if (changes.tableData.currentValue) {
-      this.dataSource = new MatTableDataSource(this.tableData);
-      // Search for nested objects
-      this.dataSource.filterPredicate = (data, filter: string) => {
-        const searchCriteria = filter.split(',');
-        let dataString = '';
-        const transformedFilter = searchCriteria[0].trim().toLowerCase();
-        if (searchCriteria.length > 1) {
-          // Search in a column
-          dataString = _get(data, searchCriteria[1]);
-        } else {
-          // Search all the columns
-          this.columns.filter(c => c.search).map(c => c.columnDef).forEach(column => dataString += _get(data, column))
-        }
-        // Transform the filter by converting it to lowercase and removing whitespace.
-        return dataString.toString().toLowerCase().indexOf(transformedFilter) !== -1;
-      };
+      if (this.sortActive) {
+        this.dataSource.data = this.tableData.sort((a, b) => (_get(a, this.sortActive) > _get(b, this.sortActive)) ? this.sortDirection === 'asc' ? 1 : -1 : ((_get(b, this.sortActive) > _get(a, this.sortActive)) ? this.sortDirection === 'asc' ? -1 : 1 : 0));
+      } else {
+        this.dataSource.data = this.tableData;
+      }
       this.updateColumnTotals();
     }
   }
@@ -131,8 +120,26 @@ export class DynamicTableComponent<T> implements OnChanges, AfterViewInit {
       this.updateColumnTotals();
     });
     this.dataSource.sort = this.sort;
-    this.dataSource.sortingDataAccessor = (data, attribute) => _get(data, attribute);
     this.dataSource.paginator = this.paginator;
+    this.dataSource.sortingDataAccessor = (data, attribute) => _get(data, attribute);
+  }
+
+  ngOnInit(): void {
+    // Search for nested objects
+    this.dataSource.filterPredicate = (data, filter: string) => {
+      const searchCriteria = filter.split(',');
+      let dataString = '';
+      const transformedFilter = searchCriteria[0].trim().toLowerCase();
+      if (searchCriteria.length > 1) {
+        // Search in a column
+        dataString = _get(data, searchCriteria[1]);
+      } else {
+        // Search all the columns
+        this.columns.filter(c => c.search).map(c => c.columnDef).forEach(column => dataString += _get(data, column))
+      }
+      // Transform the filter by converting it to lowercase and removing whitespace.
+      return dataString.toString().toLowerCase().indexOf(transformedFilter) !== -1;
+    };
   }
 
   updateXLSXHeaders() {
@@ -148,7 +155,6 @@ export class DynamicTableComponent<T> implements OnChanges, AfterViewInit {
     this.columns.map(col => {
       if ((col.total || col.average) && this.dataSource.filteredData.length > 0) {
         this.totalsRowVisible = true;
-        if (this.table) this.table.removeFooterRowDef(null);
         col.totalValue = this.dataSource.filteredData.map(t => _get(t, col.columnDef)).reduce((acc, value) => acc + value, 0);
         if (isNaN(col.totalValue)) {
           col.totalValue = 0;
