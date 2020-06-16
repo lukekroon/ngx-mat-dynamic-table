@@ -20,3 +20,74 @@
 .search-active {
    color: blue;
 }
+
+@media screen and (max-width: 600px) {
+
+    .mat-table .mat-row {
+      border-bottom: 5px solid #ddd;
+      padding-bottom: 5px;
+    }
+ 
+   .mat-table .mat-header-row {
+      display: flex;
+      flex-wrap: wrap;
+      height: auto;
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      margin-bottom: 4%;
+
+      th.mat-header-cell {
+         display: flex;
+         flex: 1;
+         align-items: center;
+         padding: 1rem 0.5rem;
+         justify-content: space-around;
+ 
+         & > .mat-sort-header-container {
+           padding-left: 15px; // padding is used to center the header table cells, due to the width of the sort icon
+         }
+       }
+    }
+
+   .mat-table .mat-cell {
+      display: block;
+      font-size: 1em;
+      text-align: right;
+      font-weight: bold;
+      height:30px;
+      padding-left: 8px;
+      padding-right: 8px;
+      margin-bottom: 4%;
+   }
+   .mat-table .mat-cell:before {
+     content: attr(data-label);
+     float: left;
+     text-transform: uppercase;
+     font-weight: normal;
+     font-size: .85em;
+   }
+
+   .mat-table .mat-footer-cell {
+      display: block;
+      font-size: 1em;
+      text-align: right;
+      font-weight: bold;
+      padding-left: 8px;
+      padding-right: 8px;
+      height:30px;
+      margin-bottom: 4%;
+   }
+
+   .mat-table .mat-footer-cell:before {
+      content: attr(data-label);
+      float: left;
+      text-transform: uppercase;
+      font-weight: normal;
+      font-size: .85em;
+    }
+
+    .mat-table .mat-cell:last-child {
+      border-bottom: 5px solid #ddd;
+    }
+ }

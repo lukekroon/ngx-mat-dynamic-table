@@ -34,7 +34,7 @@ export class DataService {
         netWorth: 50000
       }
     }];
-    for (var i = 0; i < 1000; i++) {
+    for (var i = 0; i < 50; i++) {
       data.push({
         name: Math.random().toString(36).substr(2, 10),
         surname: Math.random().toString(36).substr(2, 10),
