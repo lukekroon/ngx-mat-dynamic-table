@@ -24,6 +24,10 @@ export interface DynamicTableColumnDefinition extends DynamicTableColumn {
   dateFormat?: string; // for dates
   hidden?: boolean; // Hide this column
   cellClassKey?: string; // Apply a class to a cell
+  unit?: { // add unit strings to numbers
+    key: string //json key for the unit string
+    location: 'before' | 'after'; // Before or after
+  }
 }
 
 // For calculations
@@ -130,6 +134,9 @@ export class DynamicTableComponent<T> implements OnInit, OnChanges, AfterViewIni
       const searchCriteria = filter.split(',');
       let dataString = '';
       const transformedFilter = searchCriteria[0].trim().toLowerCase();
+
+      if (transformedFilter.length === 0) return true;
+
       if (searchCriteria.length > 1) {
         // Search in a column
         dataString = _get(data, searchCriteria[1]);
@@ -137,6 +144,7 @@ export class DynamicTableComponent<T> implements OnInit, OnChanges, AfterViewIni
         // Search all the columns
         this.columns.filter(c => c.search).map(c => c.columnDef).forEach(column => dataString += _get(data, column))
       }
+      if (!dataString) return false;
       // Transform the filter by converting it to lowercase and removing whitespace.
       return dataString.toString().toLowerCase().indexOf(transformedFilter) !== -1;
     };

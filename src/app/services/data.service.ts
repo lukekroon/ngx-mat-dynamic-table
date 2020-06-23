@@ -27,11 +27,11 @@ export class DataService {
     let data: User[] = [{
       name: 'Luke',
       surname: 'Kroon',
-      number: '+27827022334',
       signupDate: new Date('2019/01/22'),
       subscribed: true,
       money: {
-        netWorth: 50000
+        netWorth: 50000,
+        currency: '$'
       }
     }];
     for (var i = 0; i < 50; i++) {
@@ -42,7 +42,8 @@ export class DataService {
         signupDate: new Date(+(new Date()) - Math.floor(Math.random() * 1000000000000)),
         subscribed: Math.random() >= 0.5,
         money: {
-          netWorth: Math.floor(Math.random() * 50000)
+          netWorth: Math.floor(Math.random() * 50000),
+          currency: '₿'
         }
       })
     }

@@ -21,6 +21,14 @@
    color: blue;
 }
 
+.unit-before::before {
+   content: attr(data-unit)
+ }
+
+.unit-after::after {
+  content: attr(data-unit)
+}
+
 @media screen and (max-width: 550px) {
 
     .mat-table .mat-row {

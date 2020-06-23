@@ -27,6 +27,7 @@ export class AppComponent implements OnInit {
     {
       columnDef: 'number',
       columnTitle: 'Number',
+      search: true
     },
     {
       columnDef: 'subscribed',
@@ -55,11 +56,19 @@ export class AppComponent implements OnInit {
       columnDef: 'money.netWorth',
       columnTitle: 'Net Worth',
       type: 'number',
+      unit: {
+        key: 'money.currency',
+        location: 'before'
+      },
       total: true,
       average: true,
       search: true,
       sort: 'desc',
       cellClassKey: 'netWorthClass'
+    },
+    {
+      columnDef: 'description',
+      columnTitle: 'Description'
     }
   ]
 

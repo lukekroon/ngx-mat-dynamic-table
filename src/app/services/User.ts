@@ -2,10 +2,11 @@ export class User {
 
     name: string;
     surname: string;
-    number: string;
+    number?: string;
     signupDate: Date;
     subscribed: boolean;
     money: Money;
+    description?: string;
 
     netWorthClass?: string;
 
@@ -18,6 +19,8 @@ export class User {
 
 export class Money {
     netWorth: number;
+    currency: string;
+
     constructor(object) {
         Object.assign(this, object);
     }
