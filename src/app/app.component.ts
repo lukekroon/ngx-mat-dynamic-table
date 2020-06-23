@@ -56,10 +56,10 @@ export class AppComponent implements OnInit {
       columnDef: 'money.netWorth',
       columnTitle: 'Net Worth',
       type: 'number',
-      unit: {
-        key: 'money.currency',
-        location: 'before'
-      },
+      // unit: {
+      //   key: 'money.currency',
+      //   position: 'before'
+      // },
       total: true,
       average: true,
       search: true,
@@ -78,7 +78,7 @@ export class AppComponent implements OnInit {
     this.data$ = this.dataService.getObservableClass().pipe(
       map(users => {
         return users.map(user => {
-          user.netWorthClass = user.money.netWorth > 2000 ? 'a-lot-of-money' : 'broke';
+          user.netWorthClass = user.money.netWorth > 20000 ? 'a-lot-of-money' : 'broke';
           return user;
         })
       })

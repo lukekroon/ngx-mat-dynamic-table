@@ -66,8 +66,8 @@
                 [attr.data-label]="column.columnTitle">
                 <ng-container [ngSwitch]="column.type">
                     <span *ngSwitchCase="'number'"
-                        [ngClass]="column.unit.location === 'before' ? 'unit-before' : 'unit-after'"
-                        [attr.data-unit]="lodashGet(row,column.unit.key)">
+                        [ngClass]="column.unit?.position === 'before' ? 'unit-before' : 'unit-after'"
+                        [attr.data-unit]="lodashGet(row,column.unit?.key)">
                         {{ lodashGet(row,column.columnDef) | number  }}
                     </span>
                     <span *ngSwitchCase="'date'">

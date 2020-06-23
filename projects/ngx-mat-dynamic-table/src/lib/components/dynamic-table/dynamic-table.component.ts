@@ -26,7 +26,7 @@ export interface DynamicTableColumnDefinition extends DynamicTableColumn {
   cellClassKey?: string; // Apply a class to a cell
   unit?: { // add unit strings to numbers
     key: string //json key for the unit string
-    location: 'before' | 'after'; // Before or after
+    position: 'before' | 'after'; // Before or after
   }
 }
 
