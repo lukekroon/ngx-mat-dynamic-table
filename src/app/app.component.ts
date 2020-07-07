@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { DataService } from './services/data.service';
 import { Observable } from 'rxjs';
 import { DynamicTableColumnDefinition } from 'ngx-mat-dynamic-table';
@@ -15,13 +15,8 @@ export class AppComponent implements OnInit {
 
   columns: DynamicTableColumnDefinition[] = [
     {
-      columnDef: 'name',
-      columnTitle: 'Name',
-      search: true
-    },
-    {
-      columnDef: 'surname',
-      columnTitle: 'Surname',
+      columnDef: 'fullName',
+      columnTitle: 'Full Name',
       search: true
     },
     {
@@ -56,19 +51,15 @@ export class AppComponent implements OnInit {
       columnDef: 'money.netWorth',
       columnTitle: 'Net Worth',
       type: 'number',
-      // unit: {
-      //   key: 'money.currency',
-      //   position: 'before'
-      // },
+      unit: {
+        key: 'money.currency',
+        position: 'before'
+      },
       total: true,
       average: true,
       search: true,
       sort: 'desc',
       cellClassKey: 'netWorthClass'
-    },
-    {
-      columnDef: 'description',
-      columnTitle: 'Description'
     }
   ]
 

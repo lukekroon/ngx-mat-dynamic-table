@@ -158,17 +158,23 @@ export class DynamicTableComponent<T> implements OnInit, OnChanges, AfterViewIni
   }
 
   updateColumnTotals() {
-    if (!this.dataSource)
+    if (!this.dataSource) {
       return;
+    }
     this.columns.map(col => {
-      if ((col.total || col.average) && this.dataSource.filteredData.length > 0) {
+      if ((col.total || col.average)) {
         this.totalsRowVisible = true;
-        col.totalValue = this.dataSource.filteredData.map(t => _get(t, col.columnDef)).reduce((acc, value) => acc + value, 0);
-        if (isNaN(col.totalValue)) {
+        if (this.dataSource.filteredData.length > 0) {
+          col.totalValue = this.dataSource.filteredData.map(t => _get(t, col.columnDef)).reduce((acc, value) => acc + value, 0);
+          if (isNaN(col.totalValue)) {
+            col.totalValue = 0;
+            col.averageValue = 0;
+          } else {
+            col.averageValue = col.totalValue / this.dataSource.filteredData.length;
+          }
+        } else {
           col.totalValue = 0;
           col.averageValue = 0;
-        } else {
-          col.averageValue = col.totalValue / this.dataSource.filteredData.length;
         }
       }
       return col;

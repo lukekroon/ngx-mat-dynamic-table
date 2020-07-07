@@ -15,6 +15,10 @@ export class User {
         // cant assign nested objets
         this.money = new Money(object.money);
     }
+
+    get fullName(): string {
+        return `${this.name} ${this.surname}`;
+    }
 }
 
 export class Money {

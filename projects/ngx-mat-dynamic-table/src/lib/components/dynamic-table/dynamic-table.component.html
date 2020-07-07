@@ -71,7 +71,7 @@
                         {{ lodashGet(row,column.columnDef) | number  }}
                     </span>
                     <span *ngSwitchCase="'date'">
-                        {{ lodashGet(row,column.columnDef) | date: column.dateFormat ? column.dateFormat : 'd/M/yy, HH:mm' }}
+                        {{ lodashGet(row,column.columnDef) | date: column.dateFormat ? column.dateFormat : 'dd/MM/yyyy, HH:mm' }}
                     </span>
                     <span *ngSwitchCase="'icon'">
                         <ng-container *ngFor="let icon of column.icons">
@@ -111,6 +111,9 @@
         </ng-container>
 
     </table>
+    <span *ngIf="dataSource.filteredData.length === 0" class="mat-h3" style="margin: 10px;">
+        No records found!
+    </span>
     <mat-paginator class="mat-paginator-sticky" [pageSizeOptions]="pageSizeOptions ? pageSizeOptions: [50, 100, 200]">
     </mat-paginator>
 </div>

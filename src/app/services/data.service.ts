@@ -24,7 +24,9 @@ export class DataService {
   }
 
   generateData(): User[] {
-    let data: User[] = [{
+    // Cant to user here, it is a bug
+    // https://github.com/microsoft/TypeScript/pull/16344
+    let data: any[] = [{
       name: 'Luke',
       surname: 'Kroon',
       signupDate: new Date('2019/01/22'),
