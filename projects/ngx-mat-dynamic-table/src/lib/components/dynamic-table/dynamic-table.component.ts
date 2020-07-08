@@ -81,9 +81,6 @@ export class DynamicTableComponent<T> implements OnInit, OnChanges, AfterViewIni
   // The hidden columns filtered out
   columnsToShow = new FormControl();
 
-  // Expose lodash get to the HTML
-  lodashGet = _get;
-
   filterKeyUp: BehaviorSubject<string> = new BehaviorSubject('');
 
   // Default sort column definition
@@ -253,7 +250,7 @@ export class DynamicTableComponent<T> implements OnInit, OnChanges, AfterViewIni
     if (dateColumns && dateColumns.length > 0) {
       this.exportData = this.exportData.map(td => {
         dateColumns.forEach(col => {
-          _set(td, col.columnDef, formatDate(_get(td, col.columnDef), col.dateFormat ? col.dateFormat : 'd/M/yyyy, HH:mm', this.locale));
+          _set(td, col.columnDef, formatDate(_get(td, col.columnDef), col.dateFormat ? col.dateFormat : 'dd/MM/yyyy, HH:mm', this.locale));
         });
         return td;
       })

@@ -67,21 +67,21 @@
                 <ng-container [ngSwitch]="column.type">
                     <span *ngSwitchCase="'number'"
                         [ngClass]="column.unit?.position === 'before' ? 'unit-before' : 'unit-after'"
-                        [attr.data-unit]="lodashGet(row,column.unit?.key)">
-                        {{ lodashGet(row,column.columnDef) | number  }}
+                        [attr.data-unit]="row | lodashGet: column.unit?.key">
+                        {{ row | lodashGet: column.columnDef | number  }}
                     </span>
                     <span *ngSwitchCase="'date'">
-                        {{ lodashGet(row,column.columnDef) | date: column.dateFormat ? column.dateFormat : 'dd/MM/yyyy, HH:mm' }}
+                        {{ row | lodashGet: column.columnDef | date: column.dateFormat ? column.dateFormat : 'dd/MM/yyyy, HH:mm' }}
                     </span>
                     <span *ngSwitchCase="'icon'">
                         <ng-container *ngFor="let icon of column.icons">
-                            <mat-icon *ngIf="icon.value === lodashGet(row,column.columnDef)" [style.color]="icon.color"
+                            <mat-icon *ngIf="icon.value === (row | lodashGet: column.columnDef)" [style.color]="icon.color"
                                 [matTooltip]="icon.matTooltip">{{icon.matIcon}}
                             </mat-icon>
                         </ng-container>
                     </span>
                     <span *ngSwitchDefault>
-                        {{ lodashGet(row,column.columnDef) }}
+                        {{ row | lodashGet: column.columnDef }}
                     </span>
                 </ng-container>
             </td>

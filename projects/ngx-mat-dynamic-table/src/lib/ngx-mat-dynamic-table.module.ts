@@ -18,6 +18,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
+import { LodashGetPipe } from './components/lodash-get-pipe/lodash-get.pipe';
 
 
 @NgModule({
@@ -25,7 +26,8 @@ import { MatMenuModule } from '@angular/material/menu';
     NgxMatDynamicTableComponent,
     DynamicTableComponent,
     DynamicTableContainerComponent,
-    XlsxTableExportComponent
+    XlsxTableExportComponent,
+    LodashGetPipe
   ],
   imports: [
     CommonModule,

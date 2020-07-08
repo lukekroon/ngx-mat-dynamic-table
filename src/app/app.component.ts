@@ -22,7 +22,8 @@ export class AppComponent implements OnInit {
     {
       columnDef: 'number',
       columnTitle: 'Number',
-      search: true
+      search: true,
+      hidden: true
     },
     {
       columnDef: 'subscribed',
@@ -44,8 +45,7 @@ export class AppComponent implements OnInit {
       columnDef: 'signupDate',
       columnTitle: 'Date',
       type: 'date',
-      dateFormat: 'yyyy',
-      hidden: true
+      dateFormat: 'yyyy-MM'
     },
     {
       columnDef: 'money.netWorth',
