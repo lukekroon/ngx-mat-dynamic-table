@@ -162,7 +162,7 @@ export class DynamicTableComponent<T> implements OnInit, OnChanges, AfterViewIni
           criteria = columnSearch[0];
           dataString = _get(data, columnSearch[1]);
         }
-        if (dataString.toString().toLowerCase().indexOf(criteria.toLowerCase()) === -1) {
+        if (!dataString || dataString.toString().toLowerCase().indexOf(criteria.toLowerCase()) === -1) {
           validRow = false;
           return true;
         }

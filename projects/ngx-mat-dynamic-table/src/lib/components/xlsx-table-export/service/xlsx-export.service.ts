@@ -3,9 +3,7 @@ import * as FileSaver from 'file-saver';
 import * as XLSX from 'xlsx';
 import { pick, map, get as _get, partialRight, mapKeys, values } from 'lodash';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class XlsxExportService {
 
   fileType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';

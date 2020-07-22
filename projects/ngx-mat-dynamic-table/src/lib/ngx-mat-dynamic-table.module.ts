@@ -22,7 +22,8 @@ import { LodashGetPipe } from './components/lodash-get-pipe/lodash-get.pipe';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { TableSearchInputComponent } from './components/table-search-input/table-search-input.component';
 import { MatChipsModule } from '@angular/material/chips';
-import {DragDropModule} from '@angular/cdk/drag-drop';
+import { DragDropModule } from '@angular/cdk/drag-drop';
+import { XlsxExportService } from './components/xlsx-table-export/service/xlsx-export.service';
 
 
 @NgModule({
@@ -55,6 +56,7 @@ import {DragDropModule} from '@angular/cdk/drag-drop';
     MatChipsModule,
     DragDropModule
   ],
+  providers: [XlsxExportService],
   exports: [
     DynamicTableComponent,
     DynamicTableContainerComponent,
