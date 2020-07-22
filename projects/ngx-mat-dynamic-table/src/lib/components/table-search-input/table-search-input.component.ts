@@ -75,7 +75,7 @@ export class TableSearchInputComponent implements OnInit, OnDestroy {
   remove(searchTerm: SearchTerm): void {
     let index;
     // if column is cleared
-    if ((!searchTerm.search || searchTerm.search.length === 0) && searchTerm.type === 'column') {
+    if (searchTerm.type === 'column') {
       index = this.searchTerms.findIndex(i => i.column === searchTerm.column);
     } else {
       index = this.searchTerms.findIndex(i => i.search === searchTerm.search && i.type === searchTerm.type);
