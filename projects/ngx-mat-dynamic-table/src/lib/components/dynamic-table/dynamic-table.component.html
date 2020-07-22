@@ -1,8 +1,7 @@
 <div fxLayout="row wrap" fxLayoutAlign="start center" fxLayoutGap="10px">
-    <mat-form-field appearance="outline" *ngIf="filter" fxFlex.gt-xs="33" fxFlex.xs="100">
-        <mat-label>Search</mat-label>
-        <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Search">
-    </mat-form-field>
+    <ngx-mat-table-search-input [columnSearch$]="columnSearch$" (searchChange)="applyFilter($event)">
+    </ngx-mat-table-search-input>
+    <mat-spinner *ngIf="searchLoading" [diameter]="20"></mat-spinner>
     <span fxFlex.gt-xs></span>
     <mat-form-field *ngIf="optionalColumns" appearance="outline">
         <mat-label>Columns</mat-label>
@@ -15,7 +14,7 @@
     </button>
     <span *ngIf="selection.selected.length > 0" class="mat-caption">{{selection.selected.length}} values selected</span>
 </div>
-<div class="mat-elevation-z1">
+<div class="table-container">
     <table mat-table #table [dataSource]="dataSource" matSort [matSortActive]="sortActive"
         [matSortDirection]="sortDirection" style="width: 100%;">
         <!-- Checkbox Column -->
@@ -43,15 +42,13 @@
                     </span>
                     <button *ngIf="column.search" class="search-button" mat-icon-button [matMenuTriggerFor]="menu"
                         (menuOpened)="searchInput.focus()">
-                        <!-- <mat-icon [ngClass]="{'search-active': searchInput.value}">search</mat-icon> -->
-                        <mat-icon>search</mat-icon>
+                        <mat-icon [ngClass]="{'search-active': searchInput.value}">search</mat-icon>
                     </button>
                 </div>
                 <mat-menu #menu="matMenu">
                     <div (click)="$event.stopPropagation()" style="padding-right: 8px; padding-left: 8px;">
                         <mat-form-field>
-                            <input matInput #searchInput
-                                (keyup)="applyColumnFilter($event.target.value, column.columnDef)"
+                            <input matInput #searchInput (keyup)="applyColumnFilter($event.target, column.columnDef)"
                                 [placeholder]="column.columnTitle">
                             <mat-hint>Search</mat-hint>
                             <button mat-button *ngIf="searchInput.value" matSuffix mat-icon-button aria-label="Clear"
@@ -75,8 +72,8 @@
                     </span>
                     <span *ngSwitchCase="'icon'">
                         <ng-container *ngFor="let icon of column.icons">
-                            <mat-icon *ngIf="icon.value === (row | lodashGet: column.columnDef)" [style.color]="icon.color"
-                                [matTooltip]="icon.matTooltip">{{icon.matIcon}}
+                            <mat-icon *ngIf="icon.value === (row | lodashGet: column.columnDef)"
+                                [style.color]="icon.color" [matTooltip]="icon.matTooltip">{{icon.matIcon}}
                             </mat-icon>
                         </ng-container>
                     </span>
@@ -105,7 +102,10 @@
         <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true;"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="_rowClicked(row)"
             [ngClass]="{'row-click': rowClick}"></tr>
-
+        <!-- Angular 10  -->
+        <!-- <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell" [colspan]="displayedColumns.length">No data</td>
+        </tr> -->
         <ng-container *ngIf="totalsRowVisible">
             <tr mat-footer-row *matFooterRowDef="displayedColumns"></tr>
         </ng-container>
@@ -114,6 +114,6 @@
     <span *ngIf="dataSource.filteredData.length === 0" class="mat-h3" style="margin: 10px;">
         No records found!
     </span>
-    <mat-paginator class="mat-paginator-sticky" [pageSizeOptions]="pageSizeOptions ? pageSizeOptions: [50, 100, 200]">
-    </mat-paginator>
 </div>
+<mat-paginator class="mat-paginator-sticky" [pageSizeOptions]="pageSizeOptions ? pageSizeOptions: [50, 100, 200]">
+</mat-paginator>

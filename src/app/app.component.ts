@@ -66,6 +66,12 @@ export class AppComponent implements OnInit {
   constructor(private dataService: DataService) { }
 
   ngOnInit(): void {
+    for (let i = 0; i < 15; i++) {
+      this.columns.push({
+        columnDef: `day_${i}`,
+        columnTitle: `Day ${i}`,
+      })
+    }
     this.data$ = this.dataService.getObservableClass().pipe(
       map(users => {
         return users.map(user => {
@@ -74,7 +80,6 @@ export class AppComponent implements OnInit {
         })
       })
     );
-    // this.data$ = this.dataService.getObservableObjects();
   }
 
   rowData(row: any): void {

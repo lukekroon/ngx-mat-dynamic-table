@@ -1,0 +1,16 @@
+<div fxLayout="column" fxLayout.gt-xs="row wrap" fxLayoutAlign="start start" fxLayoutGap.gt-xs="15px">
+    <mat-form-field appearance="outline">
+        <mat-label>Search</mat-label>
+        <input matInput placeholder="All Columns" #searchInput (keyup)="add($event)">
+    </mat-form-field>
+    <div fxLayout="column">
+        <span *ngIf="searchTerms.length > 0" class="mat-caption">Filters</span>
+        <mat-chip-list cdkDropList cdkDropListOrientation="horizontal" (cdkDropListDropped)="orderChanged($event)">
+            <mat-chip class="example-box" cdkDrag *ngFor="let term of searchTerms"
+                [color]="term.type === 'global' ? 'primary' : 'accent'" selected>
+                {{term.search}}
+                <mat-icon (click)="remove(term)" matChipRemove>cancel</mat-icon>
+            </mat-chip>
+        </mat-chip-list>
+    </div>
+</div>

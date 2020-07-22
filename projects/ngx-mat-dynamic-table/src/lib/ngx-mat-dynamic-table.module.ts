@@ -19,6 +19,10 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
 import { LodashGetPipe } from './components/lodash-get-pipe/lodash-get.pipe';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { TableSearchInputComponent } from './components/table-search-input/table-search-input.component';
+import { MatChipsModule } from '@angular/material/chips';
+import {DragDropModule} from '@angular/cdk/drag-drop';
 
 
 @NgModule({
@@ -27,7 +31,8 @@ import { LodashGetPipe } from './components/lodash-get-pipe/lodash-get.pipe';
     DynamicTableComponent,
     DynamicTableContainerComponent,
     XlsxTableExportComponent,
-    LodashGetPipe
+    LodashGetPipe,
+    TableSearchInputComponent
   ],
   imports: [
     CommonModule,
@@ -45,7 +50,10 @@ import { LodashGetPipe } from './components/lodash-get-pipe/lodash-get.pipe';
     MatProgressBarModule,
     MatTooltipModule,
     MatSelectModule,
-    MatMenuModule
+    MatMenuModule,
+    MatProgressSpinnerModule,
+    MatChipsModule,
+    DragDropModule
   ],
   exports: [
     DynamicTableComponent,

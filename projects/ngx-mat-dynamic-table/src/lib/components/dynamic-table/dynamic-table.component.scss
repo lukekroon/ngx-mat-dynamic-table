@@ -28,6 +28,33 @@
 .unit-after::after {
   content: attr(data-unit)
 }
+ 
+.mat-cell {
+   padding-left: 5px;
+   padding-right: 5px;
+   text-overflow: ellipsis;
+   white-space: nowrap;
+}
+
+.mat-header-row {
+   text-overflow: ellipsis;
+   white-space: nowrap;
+}
+// Need sticky header and sticky scroll bar
+// @media screen and (min-width: 550px) {
+//    .table-container {
+//       display: block;
+//       width: 100%;
+//       overflow-x: scroll;
+//       .mat-table {
+//          width: 100%;
+//          max-width: 100%;
+//          margin-bottom: 1rem;
+//          display: table;
+//          border-collapse: collapse;
+//      }
+//    }
+// }
 
 @media screen and (max-width: 550px) {
 

@@ -9,8 +9,9 @@ import { FormControl } from '@angular/forms';
 import { MatSelectChange } from '@angular/material/select';
 import { XlsxExportService } from '../xlsx-table-export/service/xlsx-export.service';
 import { get as _get, set as _set } from 'lodash';
-import { BehaviorSubject, interval } from 'rxjs';
+import { BehaviorSubject, interval, Subject } from 'rxjs';
 import { debounce } from 'rxjs/operators';
+import { SearchTerm } from '../table-search-input/table-search-input.component';
 
 export interface DynamicTableColumnDefinition extends DynamicTableColumn {
   columnDef: string,
@@ -88,6 +89,10 @@ export class DynamicTableComponent<T> implements OnInit, OnChanges, AfterViewIni
   // Default sort direction
   sortDirection: 'asc' | 'desc';
 
+  tableFilters: { type: 'column' | 'global', reference: any, search: string }[];
+  searchLoading: boolean;
+  columnSearch$: Subject<SearchTerm> = new Subject();
+
   constructor(@Inject(LOCALE_ID) private locale: string,
     private xlsxExportService: XlsxExportService) { }
 
@@ -117,7 +122,14 @@ export class DynamicTableComponent<T> implements OnInit, OnChanges, AfterViewIni
   }
 
   ngAfterViewInit(): void {
-    this.filterKeyUp.pipe(debounce(() => interval(2000))).subscribe(res => {
+    this.filterKeyUp.pipe(debounce(() => interval(2000))).subscribe(filterValue => {
+      this.searchLoading = false;
+      // apply the filter after 2 seconds
+      this.dataSource.filter = filterValue;
+      if (this.dataSource.paginator) {
+        this.dataSource.paginator.firstPage();
+      }
+      // update totals
       this.updateColumnTotals();
     });
     this.dataSource.sort = this.sort;
@@ -128,22 +140,34 @@ export class DynamicTableComponent<T> implements OnInit, OnChanges, AfterViewIni
   ngOnInit(): void {
     // Search for nested objects
     this.dataSource.filterPredicate = (data, filter: string) => {
-      const searchCriteria = filter.split(',');
-      let dataString = '';
-      const transformedFilter = searchCriteria[0].trim().toLowerCase();
-
-      if (transformedFilter.length === 0) return true;
-
-      if (searchCriteria.length > 1) {
-        // Search in a column
-        dataString = _get(data, searchCriteria[1]);
-      } else {
-        // Search all the columns
-        this.columns.filter(c => c.search).map(c => c.columnDef).forEach(column => dataString += _get(data, column))
-      }
-      if (!dataString) return false;
-      // Transform the filter by converting it to lowercase and removing whitespace.
-      return dataString.toString().toLowerCase().indexOf(transformedFilter) !== -1;
+      let validRow = true;
+      if (!filter)
+        return validRow;
+      // type|searchString:column,type|searchString:column...
+      const terms = filter.split(',');
+      terms.some(term => {
+        const typeAndCriteria = term.split('|');
+        let dataString = '';
+        let criteria;
+        if (typeAndCriteria[0] === 'global') {
+          // Search All
+          this.columns.filter(c => c.search).map(c => c.columnDef).forEach(column => {
+            const cellData = _get(data, column)
+            if (cellData)
+              dataString += cellData
+          });
+          criteria = typeAndCriteria[1];
+        } else {
+          const columnSearch = typeAndCriteria[1].split(':');
+          criteria = columnSearch[0];
+          dataString = _get(data, columnSearch[1]);
+        }
+        if (dataString.toString().toLowerCase().indexOf(criteria.toLowerCase()) === -1) {
+          validRow = false;
+          return true;
+        }
+      });
+      return validRow;
     };
   }
 
@@ -178,20 +202,23 @@ export class DynamicTableComponent<T> implements OnInit, OnChanges, AfterViewIni
     });
   }
 
-  applyFilter(filterValue: string) {
-    this.dataSource.filter = filterValue;
-    if (this.dataSource.paginator) {
-      this.dataSource.paginator.firstPage();
-    }
-    this.filterKeyUp.next(filterValue);
+  applyFilter(searchTerms: SearchTerm[]) {
+    this.searchLoading = true;
+    let filterString;
+    searchTerms.forEach(term => {
+      // type|searchString:column,type|searchString:column...
+      const newTerm = `${term.type}|${term.search}${term.type === 'column' ? ':' + term.column : ''}`;
+      if (filterString)
+        filterString += `,${newTerm}`;
+      else
+        filterString = newTerm;
+    })
+    this.filterKeyUp.next(filterString);
   }
 
-  applyColumnFilter(filterValue: string, column: any): void {
-    this.dataSource.filter = `${filterValue},${column}`;
-    if (this.dataSource.paginator) {
-      this.dataSource.paginator.firstPage();
-    }
-    this.filterKeyUp.next(filterValue);
+  applyColumnFilter(element: any, column: any): void {
+    this.searchLoading = true;
+    this.columnSearch$.next({ type: 'column', column: column, inputReference: element, search: element.value });
   }
 
   _rowClicked(row: any): void {
