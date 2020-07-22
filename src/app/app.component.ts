@@ -22,8 +22,7 @@ export class AppComponent implements OnInit {
     {
       columnDef: 'number',
       columnTitle: 'Number',
-      search: true,
-      hidden: true
+      search: true
     },
     {
       columnDef: 'subscribed',
@@ -70,6 +69,7 @@ export class AppComponent implements OnInit {
       this.columns.push({
         columnDef: `day_${i}`,
         columnTitle: `Day ${i}`,
+        hidden: true
       })
     }
     this.data$ = this.dataService.getObservableClass().pipe(

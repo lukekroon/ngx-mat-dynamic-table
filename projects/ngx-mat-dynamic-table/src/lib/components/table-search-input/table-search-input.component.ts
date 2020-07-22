@@ -8,6 +8,7 @@ export interface SearchTerm {
   type: 'column' | 'global',
   inputReference?: any,
   column?: string,
+  columnTitle?: string,
   search: string
 }
 

@@ -48,11 +48,11 @@
                 <mat-menu #menu="matMenu">
                     <div (click)="$event.stopPropagation()" style="padding-right: 8px; padding-left: 8px;">
                         <mat-form-field>
-                            <input matInput #searchInput (keyup)="applyColumnFilter($event.target, column.columnDef)"
+                            <input matInput #searchInput (keyup)="applyColumnFilter($event.target, column.columnDef, column.columnTitle)"
                                 [placeholder]="column.columnTitle">
                             <mat-hint>Search</mat-hint>
                             <button mat-button *ngIf="searchInput.value" matSuffix mat-icon-button aria-label="Clear"
-                                (click)="searchInput.value=''; applyColumnFilter('', column.columnDef)">
+                                (click)="searchInput.value=''; applyColumnFilter('', column.columnDef, column.columnTitle)">
                                 <mat-icon>close</mat-icon>
                             </button>
                         </mat-form-field>

@@ -216,9 +216,9 @@ export class DynamicTableComponent<T> implements OnInit, OnChanges, AfterViewIni
     this.filterKeyUp.next(filterString);
   }
 
-  applyColumnFilter(element: any, column: any): void {
+  applyColumnFilter(element: any, column: any, columnTitle: string): void {
     this.searchLoading = true;
-    this.columnSearch$.next({ type: 'column', column: column, inputReference: element, search: element.value });
+    this.columnSearch$.next({ type: 'column', column: column, columnTitle: columnTitle, inputReference: element, search: element.value });
   }
 
   _rowClicked(row: any): void {
