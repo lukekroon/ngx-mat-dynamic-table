@@ -36,30 +36,17 @@
    white-space: nowrap;
 }
 
-.table-container {
-   overflow: auto;
-   max-height: calc(100vh - 100px);
-}
-
 .mat-header-row {
    text-overflow: ellipsis;
    white-space: nowrap;
 }
 // Need sticky header and sticky scroll bar
-// @media screen and (min-width: 550px) {
-//    .table-container {
-//       display: block;
-//       width: 100%;
-//       overflow-x: scroll;
-//       .mat-table {
-//          width: 100%;
-//          max-width: 100%;
-//          margin-bottom: 1rem;
-//          display: table;
-//          border-collapse: collapse;
-//      }
-//    }
-// }
+@media screen and (min-width: 550px) {
+   .table-container {
+      overflow: auto;
+      max-height: calc(100vh - 150px);
+   }
+}
 
 @media screen and (max-width: 550px) {
 
