@@ -34,7 +34,8 @@
                 <td mat-footer-cell *matFooterCellDef></td>
             </ng-container>
         </ng-container>
-        <ng-container *ngFor="let column of columns" [matColumnDef]="column.columnDef">
+        <ng-container *ngFor="let column of columns" [matColumnDef]="column.columnDef" [sticky]="column.sticky"
+            [stickyEnd]="column.stickyEnd">
             <th mat-header-cell *matHeaderCellDef>
                 <div fxLayout="row" fxLayoutAlign="start center">
                     <span mat-sort-header>
@@ -48,7 +49,8 @@
                 <mat-menu #menu="matMenu">
                     <div (click)="$event.stopPropagation()" style="padding-right: 8px; padding-left: 8px;">
                         <mat-form-field>
-                            <input matInput #searchInput (keyup)="applyColumnFilter($event.target, column.columnDef, column.columnTitle)"
+                            <input matInput #searchInput
+                                (keyup)="applyColumnFilter($event.target, column.columnDef, column.columnTitle)"
                                 [placeholder]="column.columnTitle">
                             <mat-hint>Search</mat-hint>
                             <button mat-button *ngIf="searchInput.value" matSuffix mat-icon-button aria-label="Clear"
@@ -102,18 +104,16 @@
         <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true;"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="_rowClicked(row)"
             [ngClass]="{'row-click': rowClick}"></tr>
-        <!-- Angular 10  -->
-        <!-- <tr class="mat-row" *matNoDataRow>
-            <td class="mat-cell" [colspan]="displayedColumns.length">No data</td>
-        </tr> -->
+
+        <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell" [attr.colspan]="displayedColumns.length">No data</td>
+        </tr>
+
         <ng-container *ngIf="totalsRowVisible">
             <tr mat-footer-row *matFooterRowDef="displayedColumns"></tr>
         </ng-container>
 
     </table>
-    <span *ngIf="dataSource.filteredData.length === 0" class="mat-h3" style="margin: 10px;">
-        No records found!
-    </span>
 </div>
 <mat-paginator class="mat-paginator-sticky" [pageSizeOptions]="pageSizeOptions ? pageSizeOptions: [50, 100, 200]">
 </mat-paginator>

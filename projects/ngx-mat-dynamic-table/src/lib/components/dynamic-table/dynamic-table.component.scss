@@ -36,6 +36,11 @@
    white-space: nowrap;
 }
 
+.table-container {
+   overflow: auto;
+   max-height: calc(100vh - 100px);
+}
+
 .mat-header-row {
    text-overflow: ellipsis;
    white-space: nowrap;

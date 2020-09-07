@@ -17,10 +17,31 @@ export class AppComponent implements OnInit {
     {
       columnDef: 'fullName',
       columnTitle: 'Full Name',
-      search: true
+      search: true,
+      sticky: true
     },
     {
       columnDef: 'number',
+      columnTitle: 'Number',
+      search: true
+    },
+    {
+      columnDef: 'number1',
+      columnTitle: 'Number',
+      search: true
+    },
+    {
+      columnDef: 'number2',
+      columnTitle: 'Number',
+      search: true
+    },
+    {
+      columnDef: 'number3',
+      columnTitle: 'Number',
+      search: true
+    },
+    {
+      columnDef: 'number4',
       columnTitle: 'Number',
       search: true
     },
@@ -57,6 +78,7 @@ export class AppComponent implements OnInit {
       total: true,
       average: true,
       search: true,
+      stickyEnd: true,
       sort: 'desc',
       cellClassKey: 'netWorthClass'
     }

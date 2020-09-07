@@ -20,6 +20,8 @@ export interface DynamicTableColumnDefinition extends DynamicTableColumn {
   search?: boolean; // enable search on this column
   total?: boolean // calculate the total of this column, only on type number
   average?: boolean // calculate the average of this column, ony on type number
+  sticky?: boolean // sticky column
+  stickyEnd?: boolean // sticky end column
   icons?: { value: any, matIcon: string, color: string, matTooltip: string }[] // Icons, only on type icon
   sort?: 'asc' | 'desc'; // asc of desc, default sort
   dateFormat?: string; // for dates
