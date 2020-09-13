@@ -8,7 +8,7 @@ import { MatCheckboxChange } from '@angular/material/checkbox';
 import { FormControl } from '@angular/forms';
 import { MatSelectChange } from '@angular/material/select';
 import { XlsxExportService } from '../xlsx-table-export/service/xlsx-export.service';
-import { get as _get, set as _set } from 'lodash';
+import { get as _get, set as _set, cloneDeep } from 'lodash';
 import { BehaviorSubject, interval, Subject } from 'rxjs';
 import { debounce } from 'rxjs/operators';
 import { SearchTerm } from '../table-search-input/table-search-input.component';
@@ -269,10 +269,10 @@ export class DynamicTableComponent<T> implements OnInit, OnChanges, AfterViewIni
     // Format dates for exporting, temp
     if (this.selection.hasValue()) {
       // Export selected data
-      this.exportData = this.selection.selected.map(a => Object.assign({}, a));
+      this.exportData = this.selection.selected.map(a => cloneDeep(a));
     } else {
       // Export filtered data and sorted
-      this.exportData = this.dataSource.sortData(this.dataSource.filteredData, this.dataSource.sort).map(a => Object.assign({}, a));
+      this.exportData = this.dataSource.sortData(this.dataSource.filteredData, this.dataSource.sort).map(a => cloneDeep(a));
     }
     // If the columns contain a date
     let dateColumns = this.columnsToShow.value.filter(e => e.type === 'date')
