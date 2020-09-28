@@ -279,7 +279,8 @@ export class DynamicTableComponent<T> implements OnInit, OnChanges, AfterViewIni
     if (dateColumns && dateColumns.length > 0) {
       this.exportData = this.exportData.map(td => {
         dateColumns.forEach(col => {
-          _set(td, col.columnDef, formatDate(_get(td, col.columnDef), col.dateFormat ? col.dateFormat : 'dd/MM/yyyy, HH:mm', this.locale));
+          if (_get(td, col.columnDef))
+            _set(td, col.columnDef, formatDate(_get(td, col.columnDef), col.dateFormat ? col.dateFormat : 'dd/MM/yyyy, HH:mm', this.locale));
         });
         return td;
       })
