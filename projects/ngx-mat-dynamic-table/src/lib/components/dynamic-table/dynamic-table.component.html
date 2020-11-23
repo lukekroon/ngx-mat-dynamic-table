@@ -110,7 +110,7 @@
         </tr>
 
         <ng-container *ngIf="totalsRowVisible">
-            <tr mat-footer-row *matFooterRowDef="displayedColumns"></tr>
+            <tr mat-footer-row *matFooterRowDef="displayedColumns; sticky: true;"></tr>
         </ng-container>
 
     </table>
