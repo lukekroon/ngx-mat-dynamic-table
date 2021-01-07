@@ -12,6 +12,7 @@ import { get as _get, set as _set, cloneDeep } from 'lodash';
 import { BehaviorSubject, interval, Subject } from 'rxjs';
 import { debounce } from 'rxjs/operators';
 import { SearchTerm } from '../table-search-input/table-search-input.component';
+import { ColumnStorageService, ColumnStorage } from '../services/column-storage.service';
 
 export interface DynamicTableColumnDefinition extends DynamicTableColumn {
   columnDef: string,
@@ -46,6 +47,7 @@ interface DynamicTableColumn {
 })
 export class DynamicTableComponent<T> implements OnInit, OnChanges, AfterViewInit {
 
+  @Input() tableId: string; // unique ID for table to save hidden columns
   @Input() tableData: T[];
   @Input() rowClick: boolean;
   @Input() fileName: string;
@@ -95,20 +97,26 @@ export class DynamicTableComponent<T> implements OnInit, OnChanges, AfterViewIni
   searchLoading: boolean;
   columnSearch$: Subject<SearchTerm> = new Subject();
 
+  savedColumnsLoading: boolean;
+
   constructor(@Inject(LOCALE_ID) private locale: string,
-    private xlsxExportService: XlsxExportService) { }
+    private xlsxExportService: XlsxExportService,
+    private columnStorageService: ColumnStorageService) { }
 
   ngOnChanges(changes: SimpleChanges): void {
     // Add headers to of data to display in table
     if (changes.columns && changes.columns.currentValue) {
+      // List of all columns to show in the view
       this.displayedColumns = [];
+      // Totals row starts as false untill inspection of column definitions
       this.totalsRowVisible = false;
+      // If multiple select is enabled, add select to the from of the array
       if (this.multiple) this.displayedColumns.push('select');
-      this.columns.forEach(col => {
-        if (!col.hidden)
-          this.displayedColumns.push(col.columnDef);
-      });
+      // add the rest of non hidden columns to the list
+      this.displayedColumns = this.columns.filter(c => !c.hidden).map(c => c.columnDef);
+      // set visible columns as checked in the selector
       this.columnsToShow.setValue(this.columns.filter(c => !c.hidden));
+
       this.setDefaultSorting();
       this.updateColumnTotals();
     }
@@ -192,6 +200,25 @@ export class DynamicTableComponent<T> implements OnInit, OnChanges, AfterViewIni
       });
       return validRow;
     };
+
+    // Check for saved columns in indexedDB
+    if (this.tableId) {
+      this.savedColumnsLoading = true;
+      // TODO: wait here for the db
+      if (this.columnStorageService.isDbOpen()) {
+        this.columnStorageService.read(this.tableId).subscribe(res => {
+          this.setSavedColumnSelection(res);
+        });
+      } else {
+        // Wait for the DB to wake up and then query
+        setTimeout(() => {
+          this.columnStorageService.read(this.tableId).subscribe(res => {
+            this.setSavedColumnSelection(res);
+          });
+        }, 2000);
+      }
+    }
+
   }
 
   updateXLSXHeaders() {
@@ -287,6 +314,8 @@ export class DynamicTableComponent<T> implements OnInit, OnChanges, AfterViewIni
   displayColumnsChanged(event: MatSelectChange): void {
     this.displayedColumns = event.value.map(c => c.columnDef);
     if (this.multiple) this.displayedColumns.unshift('select');
+    // save the current visible columns
+    this.saveCurrentColumnSelection(this.displayedColumns);
   }
 
   eportToExcell(): void {
@@ -337,6 +366,25 @@ export class DynamicTableComponent<T> implements OnInit, OnChanges, AfterViewIni
         this.sortDirection = col.sort;
         return true;
       }
+    });
+  }
+
+  setSavedColumnSelection(saved: ColumnStorage): void {
+    this.savedColumnsLoading = false;
+    if (!saved)
+      return;
+    // set the column selector with the values stored in the indexeddb
+    this.columnsToShow.setValue(this.columns.filter(c => saved.visibleColumns.some(item => item === c.columnDef)));
+    this.displayedColumns = saved.visibleColumns;
+  }
+
+  saveCurrentColumnSelection(displayedColumns: string[]): void {
+    if (!this.tableId)
+      return;
+
+    this.columnStorageService.save({
+      tableId: this.tableId,
+      visibleColumns: displayedColumns
     });
   }
 

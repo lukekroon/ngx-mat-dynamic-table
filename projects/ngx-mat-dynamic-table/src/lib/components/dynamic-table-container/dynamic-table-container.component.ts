@@ -9,6 +9,7 @@ import { DynamicTableColumnDefinition } from '../dynamic-table/dynamic-table.com
 })
 export class DynamicTableContainerComponent<T> implements OnInit {
 
+  @Input() tableId: string;
   @Input() tableData$: Observable<T[]>;
   @Input() columns: DynamicTableColumnDefinition[];
   @Input() rowClick: boolean;

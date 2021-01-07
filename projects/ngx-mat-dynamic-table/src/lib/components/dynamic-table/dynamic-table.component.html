@@ -5,6 +5,7 @@
     <mat-spinner *ngIf="searchLoading" [diameter]="20"></mat-spinner>
     <span fxFlex.gt-xs></span>
     <!-- Select enabled columns -->
+    <mat-spinner *ngIf="savedColumnsLoading" [diameter]="20"></mat-spinner>
     <mat-form-field *ngIf="optionalColumns" appearance="outline">
         <mat-label>Columns</mat-label>
         <mat-select [formControl]="columnsToShow" multiple (selectionChange)="displayColumnsChanged($event)">

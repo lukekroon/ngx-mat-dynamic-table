@@ -13,6 +13,8 @@ export class AppComponent implements OnInit {
 
   data$: Observable<any[]>;
 
+  tableId: string = 'demo-table-unique-id-i8f7jsh8'
+
   columns: DynamicTableColumnDefinition[] = [
     {
       columnDef: 'fullName',

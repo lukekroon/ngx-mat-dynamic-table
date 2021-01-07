@@ -1,6 +1,6 @@
 <div *ngIf="tableData$">
     <div *ngIf="(tableData$ | async) as tableData; else loading">
-        <ngx-mat-dynamic-table [columns]="columns" [tableData]="tableData" [rowClick]="rowClick"
+        <ngx-mat-dynamic-table [tableId]="tableId" [columns]="columns" [tableData]="tableData" [rowClick]="rowClick"
             (rowClicked)="rowClicked.emit($event)" [fileName]="fileName" [export]="export" [filter]="filter"
             [multiple]="multiple" (selectedRows)="selectedRows.emit($event)" [optionalColumns]="optionalColumns"
             [pageSizeOptions]="pageSizeOptions">
