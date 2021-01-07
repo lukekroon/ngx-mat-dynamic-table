@@ -240,7 +240,6 @@ export class DynamicTableComponent<T> implements OnInit, OnChanges, AfterViewIni
       else
         filterString = newTerm;
     })
-    console.log(filterString);
     this.filterKeyUp.next(filterString);
   }
 
