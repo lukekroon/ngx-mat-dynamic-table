@@ -9,7 +9,8 @@ export interface SearchTerm {
   inputReference?: any,
   column?: string,
   columnTitle?: string,
-  search: string
+  search: string,
+  searchType?: '=' | '!=' | '>=' | '<=' | 'empty'
 }
 
 @Component({
@@ -37,13 +38,14 @@ export class TableSearchInputComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.columnSearchSubscription = this.columnSearch$.subscribe(searchTerm => {
-      if ((searchTerm.search || '').trim()) {
+      if ((searchTerm.search || '').trim() || searchTerm.searchType === 'empty') {
         // See if there are existing global search
         let columnSearch = this.searchTerms.find(st => st.column === searchTerm.column)
         // If there are, update
-        if (columnSearch)
+        if (columnSearch) {
           columnSearch.search = searchTerm.search.trim();
-        else // Else add
+          columnSearch.searchType = searchTerm.searchType;
+        } else // Else add
           this.searchTerms.push(searchTerm);
 
         this.emitNewSearch();

@@ -145,28 +145,49 @@ export class DynamicTableComponent<T> implements OnInit, OnChanges, AfterViewIni
       let validRow = true;
       if (!filter)
         return validRow;
-      // type|searchString:column,type|searchString:column...
-      const terms = filter.split(',');
+      // type|searchString:column#searchType,type|searchString:column#searchType...
+      const terms = filter.split(','); // Split multiple search
       terms.some(term => {
-        const typeAndCriteria = term.split('|');
+        let [type, criteria] = term.split('|'); // Split global / column search
         let dataString = '';
-        let criteria;
-        if (typeAndCriteria[0] === 'global') {
+        let searchType; // type of search in a column
+        // let criteria;
+        if (type === 'global') {
           // Search All
           this.columns.filter(c => c.search).map(c => c.columnDef).forEach(column => {
             const cellData = _get(data, column)
             if (cellData)
               dataString += cellData
           });
-          criteria = typeAndCriteria[1];
+          // String contains/equals in all columns
+          if (!dataString || dataString.toString().toLowerCase().indexOf(criteria.toLowerCase()) === -1) {
+            validRow = false;
+            return true;
+          }
         } else {
-          const columnSearch = typeAndCriteria[1].split(':');
-          criteria = columnSearch[0];
-          dataString = _get(data, columnSearch[1]);
-        }
-        if (!dataString || dataString.toString().toLowerCase().indexOf(criteria.toLowerCase()) === -1) {
-          validRow = false;
-          return true;
+          const [searchString, columnAndType] = criteria.split(':'); // Split search string and criteria
+          let column;
+          [column, searchType] = columnAndType.split('#'); // Split column and type of search
+          criteria = searchString;
+          dataString = _get(data, column); // get the data
+          if (searchType === '!=') {
+            // String contains/equals in all columns
+            if (!dataString || dataString.toString().toLowerCase().indexOf(criteria.toLowerCase()) !== -1) {
+              validRow = false;
+              return true;
+            }
+          } else if (searchType === 'empty') {
+            if (dataString) {
+              validRow = false;
+              return true;
+            }
+          } else {
+            // String contains/equals in all columns
+            if (!dataString || dataString.toString().toLowerCase().indexOf(criteria.toLowerCase()) === -1) {
+              validRow = false;
+              return true;
+            }
+          }
         }
       });
       return validRow;
@@ -188,7 +209,7 @@ export class DynamicTableComponent<T> implements OnInit, OnChanges, AfterViewIni
       if ((col.total || col.average)) {
         this.totalsRowVisible = true;
         if (this.dataSource.filteredData.length > 0) {
-          col.totalValue = this.dataSource.filteredData.map(t => _get(t, col.columnDef)).reduce((acc, value) => acc + value, 0);
+          col.totalValue = this.dataSource.filteredData.map(t => _get(t, col.columnDef)).reduce((acc, value) => acc + (value ? value : 0), 0);
           if (isNaN(col.totalValue)) {
             col.totalValue = 0;
             col.averageValue = 0;
@@ -208,19 +229,29 @@ export class DynamicTableComponent<T> implements OnInit, OnChanges, AfterViewIni
     this.searchLoading = true;
     let filterString;
     searchTerms.forEach(term => {
-      // type|searchString:column,type|searchString:column...
-      const newTerm = `${term.type}|${term.search}${term.type === 'column' ? ':' + term.column : ''}`;
+      // type: Global or in a column
+      // |searchString: the text/number searching for
+      // :column: when type is column, this field is set
+      // #searchType = != >= <= empty
+      // type|searchString:column#searchType,type|searchString:column#searchType...
+      const newTerm = `${term.type}|${term.search}${term.type === 'column' ? ':' + term.column + '#' + term.searchType : ''}`;
       if (filterString)
         filterString += `,${newTerm}`;
       else
         filterString = newTerm;
     })
+    console.log(filterString);
     this.filterKeyUp.next(filterString);
   }
 
-  applyColumnFilter(element: any, column: any, columnTitle: string): void {
+  applyColumnFilter(element: any, column: any, columnTitle: string, searchType: '=' | '!=' | '>=' | '<=' | 'empty'): void {
+    //
+    if (searchType && searchType !== 'empty' && !element.value)
+      return;
+
     this.searchLoading = true;
-    this.columnSearch$.next({ type: 'column', column: column, columnTitle: columnTitle, inputReference: element, search: element.value });
+    // Send data to table-search-input and add a chip
+    this.columnSearch$.next({ type: 'column', column: column, columnTitle: columnTitle, inputReference: element, search: element.value, searchType: searchType });
   }
 
   _rowClicked(row: any): void {

@@ -24,6 +24,7 @@ import { TableSearchInputComponent } from './components/table-search-input/table
 import { MatChipsModule } from '@angular/material/chips';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { XlsxExportService } from './components/xlsx-table-export/service/xlsx-export.service';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 
 
 @NgModule({
@@ -54,7 +55,8 @@ import { XlsxExportService } from './components/xlsx-table-export/service/xlsx-e
     MatMenuModule,
     MatProgressSpinnerModule,
     MatChipsModule,
-    DragDropModule
+    DragDropModule,
+    MatButtonToggleModule
   ],
   providers: [XlsxExportService],
   exports: [

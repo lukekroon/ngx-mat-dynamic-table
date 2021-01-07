@@ -9,7 +9,13 @@
             <mat-chip class="example-box" cdkDrag *ngFor="let term of searchTerms"
                 [color]="term.type === 'global' ? 'primary' : 'accent'" selected
                 [matTooltip]="term.type === 'global' ? 'All':term.columnTitle">
-                {{term.search}}
+                <span *ngIf="term.searchType === 'empty'; else not_empty">
+                    {{term.columnTitle}} (empty)
+                </span>
+                <ng-template #not_empty>
+                    {{term.search}} {{term.searchType && term.searchType === '!=' ?
+                    '(≠)' : ''}}
+                </ng-template>
                 <mat-icon (click)="remove(term)" matChipRemove>cancel</mat-icon>
             </mat-chip>
         </mat-chip-list>

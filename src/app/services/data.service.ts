@@ -32,7 +32,16 @@ export class DataService {
       signupDate: new Date('2019/01/22'),
       subscribed: true,
       money: {
-        netWorth: 50000,
+        // netWorth: 50000,
+        currency: '$'
+      }
+    }, {
+      name: 'Piet',
+      surname: 'Xamala',
+      signupDate: new Date('2019/01/22'),
+      subscribed: false,
+      money: {
+        // netWorth: 50000,
         currency: '$'
       }
     }];
