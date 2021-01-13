@@ -20,7 +20,7 @@
     <span *ngIf="selection.selected.length > 0" class="mat-caption">{{selection.selected.length}} values selected</span>
 </div>
 <!-- Table wrapping container -->
-<div class="table-container">
+<div *ngIf="!savedColumnsLoading" class="table-container">
     <table mat-table #table [dataSource]="dataSource" matSort [matSortActive]="sortActive"
         [matSortDirection]="sortDirection" style="width: 100%;">
         <!-- Checkbox Column -->

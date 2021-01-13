@@ -27,6 +27,7 @@ export interface DynamicTableColumnDefinition extends DynamicTableColumn {
   sort?: 'asc' | 'desc'; // asc of desc, default sort
   dateFormat?: string; // for dates
   hidden?: boolean; // Hide this column
+  ignoreSave?: boolean; // If set, this column will not be saved in indexeddb, intended for dynamic date columns etc. 
   cellClassKey?: string; // Apply a class to a cell
   unit?: { // add unit strings to numbers
     key: string //json key for the unit string
@@ -106,19 +107,7 @@ export class DynamicTableComponent<T> implements OnInit, OnChanges, AfterViewIni
   ngOnChanges(changes: SimpleChanges): void {
     // Add headers to of data to display in table
     if (changes.columns && changes.columns.currentValue) {
-      // List of all columns to show in the view
-      this.displayedColumns = [];
-      // Totals row starts as false untill inspection of column definitions
-      this.totalsRowVisible = false;
-      // If multiple select is enabled, add select to the from of the array
-      if (this.multiple) this.displayedColumns.push('select');
-      // add the rest of non hidden columns to the list
-      this.displayedColumns = this.columns.filter(c => !c.hidden).map(c => c.columnDef);
-      // set visible columns as checked in the selector
-      this.columnsToShow.setValue(this.columns.filter(c => !c.hidden));
-
-      this.setDefaultSorting();
-      this.updateColumnTotals();
+      this.setColumns();
     }
 
     if (changes.tableData.currentValue) {
@@ -201,23 +190,7 @@ export class DynamicTableComponent<T> implements OnInit, OnChanges, AfterViewIni
       return validRow;
     };
 
-    // Check for saved columns in indexedDB
-    if (this.tableId) {
-      this.savedColumnsLoading = true;
-      // TODO: wait here for the db
-      if (this.columnStorageService.isDbOpen()) {
-        this.columnStorageService.read(this.tableId).subscribe(res => {
-          this.setSavedColumnSelection(res);
-        });
-      } else {
-        // Wait for the DB to wake up and then query
-        setTimeout(() => {
-          this.columnStorageService.read(this.tableId).subscribe(res => {
-            this.setSavedColumnSelection(res);
-          });
-        }, 2000);
-      }
-    }
+    this.setColumns();
 
   }
 
@@ -309,6 +282,40 @@ export class DynamicTableComponent<T> implements OnInit, OnChanges, AfterViewIni
 
   emitSelected(): void {
     this.selectedRows.emit(this.selection.selected);
+  }
+
+  setColumns(): void {
+    // Check for saved columns in indexedDB
+    if (this.tableId) {
+      this.savedColumnsLoading = true;
+      // TODO: wait here for the db
+      if (this.columnStorageService.isDbOpen()) {
+        this.columnStorageService.read(this.tableId).subscribe(res => {
+          this.setSavedColumnSelection(res);
+        });
+      } else {
+        // Wait for the DB to wake up and then query
+        setTimeout(() => {
+          this.columnStorageService.read(this.tableId).subscribe(res => {
+            this.setSavedColumnSelection(res);
+          });
+        }, 500);
+      }
+    } else {
+      // List of all columns to show in the view
+      this.displayedColumns = [];
+      // Totals row starts as false untill inspection of column definitions
+      this.totalsRowVisible = false;
+      // If multiple select is enabled, add select to the from of the array
+      if (this.multiple) this.displayedColumns.push('select');
+      // add the rest of non hidden columns to the list
+      this.displayedColumns = this.columns.filter(c => !c.hidden).map(c => c.columnDef);
+      // set visible columns as checked in the selector
+      this.columnsToShow.setValue(this.columns.filter(c => !c.hidden));
+
+      this.setDefaultSorting();
+      this.updateColumnTotals();
+    }
   }
 
   displayColumnsChanged(event: MatSelectChange): void {
