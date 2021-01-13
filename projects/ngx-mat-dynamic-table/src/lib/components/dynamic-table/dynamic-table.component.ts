@@ -302,20 +302,24 @@ export class DynamicTableComponent<T> implements OnInit, OnChanges, AfterViewIni
         }, 500);
       }
     } else {
-      // List of all columns to show in the view
-      this.displayedColumns = [];
-      // Totals row starts as false untill inspection of column definitions
-      this.totalsRowVisible = false;
-      // If multiple select is enabled, add select to the from of the array
-      if (this.multiple) this.displayedColumns.push('select');
-      // add the rest of non hidden columns to the list
-      this.displayedColumns = this.columns.filter(c => !c.hidden).map(c => c.columnDef);
-      // set visible columns as checked in the selector
-      this.columnsToShow.setValue(this.columns.filter(c => !c.hidden));
-
-      this.setDefaultSorting();
-      this.updateColumnTotals();
+      this.setStaticColumns();
     }
+  }
+
+  setStaticColumns(): void {
+    // List of all columns to show in the view
+    this.displayedColumns = [];
+    // Totals row starts as false untill inspection of column definitions
+    this.totalsRowVisible = false;
+    // If multiple select is enabled, add select to the from of the array
+    if (this.multiple) this.displayedColumns.push('select');
+    // add the rest of non hidden columns to the list
+    this.displayedColumns = this.columns.filter(c => !c.hidden).map(c => c.columnDef);
+    // set visible columns as checked in the selector
+    this.columnsToShow.setValue(this.columns.filter(c => !c.hidden));
+
+    this.setDefaultSorting();
+    this.updateColumnTotals();
   }
 
   displayColumnsChanged(event: MatSelectChange): void {
@@ -378,8 +382,11 @@ export class DynamicTableComponent<T> implements OnInit, OnChanges, AfterViewIni
 
   setSavedColumnSelection(saved: ColumnStorage): void {
     this.savedColumnsLoading = false;
-    if (!saved)
+    if (!saved || saved.visibleColumns.length === 0) {
+      this.setStaticColumns();
       return;
+    }
+
     // set the column selector with the values stored in the indexeddb
     this.columnsToShow.setValue(this.columns.filter(c => saved.visibleColumns.some(item => item === c.columnDef)));
     this.displayedColumns = saved.visibleColumns;
