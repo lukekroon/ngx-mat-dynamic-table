@@ -1,11 +1,12 @@
-import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
+import { Component, OnInit, Input, EventEmitter, Output, ChangeDetectionStrategy } from '@angular/core';
 import { Observable } from 'rxjs';
 import { DynamicTableColumnDefinition } from '../dynamic-table/dynamic-table.component';
 
 @Component({
   selector: 'ngx-mat-dynamic-table-container',
   templateUrl: './dynamic-table-container.component.html',
-  styleUrls: ['./dynamic-table-container.component.css']
+  styleUrls: ['./dynamic-table-container.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DynamicTableContainerComponent<T> implements OnInit {
 

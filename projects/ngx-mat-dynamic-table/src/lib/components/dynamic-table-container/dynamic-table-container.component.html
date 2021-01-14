@@ -1,4 +1,4 @@
-<div *ngIf="tableData$">
+<ng-container *ngIf="tableData$">
     <div *ngIf="(tableData$ | async) as tableData; else loading">
         <ngx-mat-dynamic-table [tableId]="tableId" [columns]="columns" [tableData]="tableData" [rowClick]="rowClick"
             (rowClicked)="rowClicked.emit($event)" [fileName]="fileName" [export]="export" [filter]="filter"
@@ -9,4 +9,4 @@
     <ng-template #loading>
         <mat-progress-bar mode="indeterminate"></mat-progress-bar>
     </ng-template>
-</div>
+</ng-container>

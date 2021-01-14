@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter, ViewChild, Inject, LOCALE_ID, SimpleChanges, OnChanges, AfterViewInit } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ViewChild, Inject, LOCALE_ID, SimpleChanges, OnChanges, AfterViewInit, ChangeDetectionStrategy } from '@angular/core';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { MatSort, MatSortable, Sort, SortDirection } from '@angular/material/sort';
 import { MatPaginator } from '@angular/material/paginator';
@@ -44,7 +44,8 @@ interface DynamicTableColumn {
 @Component({
   selector: 'ngx-mat-dynamic-table',
   templateUrl: './dynamic-table.component.html',
-  styleUrls: ['./dynamic-table.component.scss']
+  styleUrls: ['./dynamic-table.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DynamicTableComponent<T> implements OnInit, OnChanges, AfterViewInit {
 
@@ -111,11 +112,13 @@ export class DynamicTableComponent<T> implements OnInit, OnChanges, AfterViewIni
     }
 
     if (changes.tableData.currentValue) {
-      if (this.sortActive) {
-        this.dataSource.data = this.tableData.sort((a, b) => (_get(a, this.sortActive) > _get(b, this.sortActive)) ? this.sortDirection === 'asc' ? 1 : -1 : ((_get(b, this.sortActive) > _get(a, this.sortActive)) ? this.sortDirection === 'asc' ? -1 : 1 : 0));
-      } else {
-        this.dataSource.data = this.tableData;
-      }
+      // TODO: Test this default sort change
+      // if (this.sortActive) {
+      //   this.dataSource.data = this.tableData.sort((a, b) => (_get(a, this.sortActive) > _get(b, this.sortActive)) ? this.sortDirection === 'asc' ? 1 : -1 : ((_get(b, this.sortActive) > _get(a, this.sortActive)) ? this.sortDirection === 'asc' ? -1 : 1 : 0));
+      // } else {
+      //   this.dataSource.data = this.tableData;
+      // }
+      this.dataSource.data = this.tableData;
       this.updateColumnTotals();
     }
   }
@@ -189,9 +192,6 @@ export class DynamicTableComponent<T> implements OnInit, OnChanges, AfterViewIni
       });
       return validRow;
     };
-
-    this.setColumns();
-
   }
 
   updateXLSXHeaders() {
@@ -285,6 +285,7 @@ export class DynamicTableComponent<T> implements OnInit, OnChanges, AfterViewIni
   }
 
   setColumns(): void {
+    this.setDefaultSorting();
     // Check for saved columns in indexedDB
     if (this.tableId) {
       this.savedColumnsLoading = true;
@@ -318,7 +319,6 @@ export class DynamicTableComponent<T> implements OnInit, OnChanges, AfterViewIni
     // set visible columns as checked in the selector
     this.columnsToShow.setValue(this.columns.filter(c => !c.hidden));
 
-    this.setDefaultSorting();
     this.updateColumnTotals();
   }
 
