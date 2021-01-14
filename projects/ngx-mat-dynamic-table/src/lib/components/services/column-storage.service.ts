@@ -59,6 +59,11 @@ export class ColumnStorageService {
   read(tableId: string): Observable<ColumnStorage> {
     return new Observable((observer: Observer<ColumnStorage>) => {
       var transaction = this.db.transaction([this.storeName]);
+      if (!transaction) {
+        observer.next(null);
+        observer.complete();
+        return;
+      }
       var objectStore = transaction.objectStore(this.storeName);
       var request = objectStore.get(tableId);
 

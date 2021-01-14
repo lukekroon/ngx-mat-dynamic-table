@@ -308,14 +308,16 @@ export class DynamicTableComponent<T> implements OnInit, OnChanges, AfterViewIni
   }
 
   setStaticColumns(): void {
+    console.log('set static')
     // List of all columns to show in the view
     this.displayedColumns = [];
     // Totals row starts as false untill inspection of column definitions
     this.totalsRowVisible = false;
-    // If multiple select is enabled, add select to the from of the array
-    if (this.multiple) this.displayedColumns.push('select');
     // add the rest of non hidden columns to the list
     this.displayedColumns = this.columns.filter(c => !c.hidden).map(c => c.columnDef);
+    // If multiple select is enabled, add select to the from of the array
+    if (this.multiple) this.displayedColumns.unshift('select');
+    console.log(this.displayedColumns)
     // set visible columns as checked in the selector
     this.columnsToShow.setValue(this.columns.filter(c => !c.hidden));
 
@@ -389,6 +391,8 @@ export class DynamicTableComponent<T> implements OnInit, OnChanges, AfterViewIni
 
     // set the column selector with the values stored in the indexeddb
     this.columnsToShow.setValue(this.columns.filter(c => saved.visibleColumns.some(item => item === c.columnDef)));
+    // If multiple is enabled but was not saved in the saved array, add it
+    if (this.multiple && saved.visibleColumns[0] !== 'select') saved.visibleColumns.unshift('select');
     this.displayedColumns = saved.visibleColumns;
   }
 
@@ -396,9 +400,13 @@ export class DynamicTableComponent<T> implements OnInit, OnChanges, AfterViewIni
     if (!this.tableId)
       return;
 
+    let toSave = this.displayedColumns.slice();
+    // Do not save the selection column
+    if (this.multiple && toSave[0] === 'select') toSave.shift();
+
     this.columnStorageService.save({
       tableId: this.tableId,
-      visibleColumns: displayedColumns
+      visibleColumns: toSave
     });
   }
 
