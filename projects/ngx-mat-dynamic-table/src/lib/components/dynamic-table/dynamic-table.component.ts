@@ -136,10 +136,49 @@ export class DynamicTableComponent<T> implements OnInit, OnChanges, AfterViewIni
     });
     this.dataSource.sort = this.sort;
     this.dataSource.paginator = this.paginator;
-    this.dataSource.sortingDataAccessor = (data, attribute) => _get(data, attribute);
+
   }
 
   ngOnInit(): void {
+    this.dataSource.sortingDataAccessor = (data, attribute) => _get(data, attribute);
+    // Changed this sort function from the source to compare alpha numerics https://stackoverflow.com/a/66157044/6044269
+    // https://github.com/angular/components/blob/master/src/material/table/table-data-source.ts#L165
+    this.dataSource.sortData = (data: T[], sort: MatSort) => {
+      const active = sort.active;
+      const direction = sort.direction;
+      if (!active || direction == '') { return data; }
+
+      return data.sort((a, b) => {
+        let valueA = this.dataSource.sortingDataAccessor(a, active);
+        let valueB = this.dataSource.sortingDataAccessor(b, active);
+
+        const valueAType = typeof valueA;
+        const valueBType = typeof valueB;
+
+        if (valueAType !== valueBType) {
+          if (valueAType === 'number') { valueA += ''; }
+          if (valueBType === 'number') { valueB += ''; }
+        }
+
+        let comparatorResult = 0;
+        if (valueA != null && valueB != null) {
+          // ! This is the If that I changed https://stackoverflow.com/a/66157044/6044269
+          if (valueAType === 'string' && valueBType === 'string') {
+            comparatorResult = (valueA as string).localeCompare(valueB as string, 'en', { numeric: true })
+          } else if (valueA > valueB) {
+            comparatorResult = 1;
+          } else if (valueA < valueB) {
+            comparatorResult = -1;
+          }
+        } else if (valueA != null) {
+          comparatorResult = 1;
+        } else if (valueB != null) {
+          comparatorResult = -1;
+        }
+
+        return comparatorResult * (direction == 'asc' ? 1 : -1);
+      });
+    }
     // Search for nested objects
     this.dataSource.filterPredicate = (data, filter: string) => {
       let validRow = true;
