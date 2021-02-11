@@ -33,7 +33,7 @@ export class ColumnStorageService {
 
     request.onsuccess = (event) => {
       this.db = request.result;
-      console.log('ngx-mat-dynamic-table: db opened 👍' + this.db);
+      console.debug('ngx-mat-dynamic-table: db opened 👍' + this.db);
     };
 
   }

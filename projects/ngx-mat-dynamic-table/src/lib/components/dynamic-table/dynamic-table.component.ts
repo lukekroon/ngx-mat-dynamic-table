@@ -308,7 +308,6 @@ export class DynamicTableComponent<T> implements OnInit, OnChanges, AfterViewIni
   }
 
   setStaticColumns(): void {
-    console.log('set static')
     // List of all columns to show in the view
     this.displayedColumns = [];
     // Totals row starts as false untill inspection of column definitions
@@ -317,7 +316,6 @@ export class DynamicTableComponent<T> implements OnInit, OnChanges, AfterViewIni
     this.displayedColumns = this.columns.filter(c => !c.hidden).map(c => c.columnDef);
     // If multiple select is enabled, add select to the from of the array
     if (this.multiple) this.displayedColumns.unshift('select');
-    console.log(this.displayedColumns)
     // set visible columns as checked in the selector
     this.columnsToShow.setValue(this.columns.filter(c => !c.hidden));
 
