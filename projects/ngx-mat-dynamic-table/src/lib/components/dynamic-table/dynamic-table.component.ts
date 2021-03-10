@@ -118,6 +118,9 @@ export class DynamicTableComponent<T> implements OnInit, OnChanges, AfterViewIni
       // } else {
       //   this.dataSource.data = this.tableData;
       // }
+      // Clear selection if new data is comming in
+      this.selection.clear();
+      
       this.dataSource.data = this.tableData;
       this.updateColumnTotals();
     }

@@ -1,6 +1,6 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { DataService } from './services/data.service';
-import { Observable } from 'rxjs';
+import { Observable, ReplaySubject, Subject } from 'rxjs';
 import { DynamicTableColumnDefinition } from 'ngx-mat-dynamic-table';
 import { map } from 'rxjs/operators';
 
@@ -11,7 +11,7 @@ import { map } from 'rxjs/operators';
 })
 export class AppComponent implements OnInit {
 
-  data$: Observable<any[]>;
+  data$: Subject<any[]> = new Subject();
 
   tableId: string = 'demo-table-unique-id-i8f7jsh8'
 
@@ -96,14 +96,20 @@ export class AppComponent implements OnInit {
         hidden: true
       })
     }
-    this.data$ = this.dataService.getObservableClass().pipe(
+    this.getData();
+  }
+
+  getData(): void {
+    this.dataService.getObservableClass().pipe(
       map(users => {
         return users.map(user => {
           user.netWorthClass = user.money.netWorth > 20000 ? 'a-lot-of-money' : 'broke';
           return user;
         })
       })
-    );
+    ).subscribe(res => {
+      this.data$.next(res);
+    });
   }
 
   rowData(row: any): void {
