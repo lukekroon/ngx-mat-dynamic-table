@@ -113,7 +113,13 @@ export class AppComponent implements OnInit {
   }
 
   rowData(row: any): void {
+    console.log('Row Data');
     console.log(row);
+  }
+
+  cellData(data: { row: any, column: string, data: any }): void {
+    console.log('Cell Data');
+    console.log(data.column, data.data);
   }
 
   selectedRows(rows: any[]): void {

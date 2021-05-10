@@ -87,7 +87,7 @@
             </th>
             <!-- Table Cell -->
             <td mat-cell *matCellDef="let row" [class]="row[column.cellClassKey]"
-                [attr.data-label]="column.columnTitle">
+                [attr.data-label]="column.columnTitle" (click)="onMatCellClick(row, column);">
                 <ng-container [ngSwitch]="column.type">
                     <!-- Number type columns -->
                     <span *ngSwitchCase="'number'"

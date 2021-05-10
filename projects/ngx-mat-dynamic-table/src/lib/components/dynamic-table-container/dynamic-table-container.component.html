@@ -1,8 +1,9 @@
 <ng-container *ngIf="tableData$">
     <div *ngIf="(tableData$ | async) as tableData; else loading">
         <ngx-mat-dynamic-table [tableId]="tableId" [columns]="columns" [tableData]="tableData" [rowClick]="rowClick"
-            (rowClicked)="rowClicked.emit($event)" [fileName]="fileName" [export]="export" [filter]="filter"
-            [multiple]="multiple" (selectedRows)="selectedRows.emit($event)" [optionalColumns]="optionalColumns"
+            (rowClicked)="rowClicked.emit($event)" [cellClick]="cellClick" (cellClicked)="cellClicked.emit($event)"
+            [fileName]="fileName" [export]="export" [filter]="filter" [multiple]="multiple"
+            (selectedRows)="selectedRows.emit($event)" [optionalColumns]="optionalColumns"
             [pageSizeOptions]="pageSizeOptions">
         </ngx-mat-dynamic-table>
     </div>

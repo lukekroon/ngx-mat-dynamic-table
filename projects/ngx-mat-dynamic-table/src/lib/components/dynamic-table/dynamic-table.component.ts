@@ -41,6 +41,8 @@ interface DynamicTableColumn {
   averageValue?: number;
 }
 
+export interface DynamicTableCellClickResult { row: any, column: string, data: string }
+
 @Component({
   selector: 'ngx-mat-dynamic-table',
   templateUrl: './dynamic-table.component.html',
@@ -52,6 +54,7 @@ export class DynamicTableComponent<T> implements OnInit, OnChanges, AfterViewIni
   @Input() tableId: string; // unique ID for table to save hidden columns
   @Input() tableData: T[];
   @Input() rowClick: boolean;
+  @Input() cellClick: boolean;
   @Input() fileName: string;
 
   @Input() columns: DynamicTableColumnDefinition[];
@@ -63,6 +66,7 @@ export class DynamicTableComponent<T> implements OnInit, OnChanges, AfterViewIni
   @Input() optionalColumns: boolean = false; // Show or hide columns
 
   @Output() rowClicked: EventEmitter<T> = new EventEmitter<T>();
+  @Output() cellClicked: EventEmitter<DynamicTableCellClickResult> = new EventEmitter<DynamicTableCellClickResult>();
 
   @Output() selectedRows: EventEmitter<T[]> = new EventEmitter<T[]>();
 
@@ -120,7 +124,7 @@ export class DynamicTableComponent<T> implements OnInit, OnChanges, AfterViewIni
       // }
       // Clear selection if new data is comming in
       this.selection.clear();
-      
+
       this.dataSource.data = this.tableData;
       this.updateColumnTotals();
     }
@@ -299,6 +303,13 @@ export class DynamicTableComponent<T> implements OnInit, OnChanges, AfterViewIni
     if (!this.rowClick)
       return;
     this.rowClicked.emit(row);
+  }
+
+  onMatCellClick(row: any, column: DynamicTableColumnDefinition): void {
+    if (!this.cellClick)
+      return;
+
+    this.cellClicked.emit({ row: row, column: column.columnDef, data: _get(row, column.columnDef) });
   }
 
   /** Whether the number of selected elements matches the total number of rows. */

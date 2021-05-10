@@ -14,6 +14,7 @@ export class DynamicTableContainerComponent<T> implements OnInit {
   @Input() tableData$: Observable<T[]>;
   @Input() columns: DynamicTableColumnDefinition[];
   @Input() rowClick: boolean;
+  @Input() cellClick: boolean;
   @Input() fileName: string;
   @Input() export: boolean = false; // Enable export for this table
   @Input() filter: boolean = false; // Enable filter for this table
@@ -22,6 +23,7 @@ export class DynamicTableContainerComponent<T> implements OnInit {
   @Input() pageSizeOptions: number[];
 
   @Output() rowClicked: EventEmitter<T> = new EventEmitter<T>();
+  @Output() cellClicked: EventEmitter<T> = new EventEmitter<T>();
   @Output() selectedRows: EventEmitter<T[]> = new EventEmitter<T[]>();
 
   constructor() { }
