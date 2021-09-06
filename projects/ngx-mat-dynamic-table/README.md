@@ -10,6 +10,11 @@ Install with npm:
 
 `npm i ngx-mat-dynamic-table`
 
+Publish to npm:
+
+`npm publish --tag beta`
+`npm publish`
+
 After installation include `NgxMatDynamicTableModule` in your module imports:
 
 ```javascript

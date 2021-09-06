@@ -125,4 +125,9 @@ export class AppComponent implements OnInit {
   selectedRows(rows: any[]): void {
     console.log(rows);
   }
+
+  filterResult(result): void {
+    console.log('Filter Result');
+    console.log(result);
+  }
 }

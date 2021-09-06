@@ -21,10 +21,12 @@ export class DynamicTableContainerComponent<T> implements OnInit {
   @Input() multiple: boolean = false; // Allow multiple select for this table
   @Input() optionalColumns: boolean = false; // Show or hide columns
   @Input() pageSizeOptions: number[];
+  @Input() emitFilteredData: boolean = false; // Show or hide columns
 
   @Output() rowClicked: EventEmitter<T> = new EventEmitter<T>();
   @Output() cellClicked: EventEmitter<T> = new EventEmitter<T>();
   @Output() selectedRows: EventEmitter<T[]> = new EventEmitter<T[]>();
+  @Output() filterResult: EventEmitter<T[]> = new EventEmitter<T[]>();
 
   constructor() { }
 

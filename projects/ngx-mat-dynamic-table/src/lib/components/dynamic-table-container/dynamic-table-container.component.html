@@ -4,7 +4,8 @@
             (rowClicked)="rowClicked.emit($event)" [cellClick]="cellClick" (cellClicked)="cellClicked.emit($event)"
             [fileName]="fileName" [export]="export" [filter]="filter" [multiple]="multiple"
             (selectedRows)="selectedRows.emit($event)" [optionalColumns]="optionalColumns"
-            [pageSizeOptions]="pageSizeOptions">
+            [pageSizeOptions]="pageSizeOptions" [emitFilteredData]="emitFilteredData"
+            (filterResult)="filterResult.emit($event)">
         </ngx-mat-dynamic-table>
     </div>
     <ng-template #loading>

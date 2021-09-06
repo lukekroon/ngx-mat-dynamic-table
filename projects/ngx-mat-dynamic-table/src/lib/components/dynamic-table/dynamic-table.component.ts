@@ -9,7 +9,7 @@ import { FormControl } from '@angular/forms';
 import { MatSelectChange } from '@angular/material/select';
 import { XlsxExportService } from '../xlsx-table-export/service/xlsx-export.service';
 import { get as _get, set as _set, cloneDeep } from 'lodash';
-import { BehaviorSubject, interval, Subject } from 'rxjs';
+import { interval, ReplaySubject, Subject } from 'rxjs';
 import { debounce } from 'rxjs/operators';
 import { SearchTerm } from '../table-search-input/table-search-input.component';
 import { ColumnStorageService, ColumnStorage } from '../services/column-storage.service';
@@ -64,11 +64,13 @@ export class DynamicTableComponent<T> implements OnInit, OnChanges, AfterViewIni
   @Input() filter: boolean = false; // Enable filter for this table
   @Input() multiple: boolean = false; // Allow multiple select for this table
   @Input() optionalColumns: boolean = false; // Show or hide columns
+  @Input() emitFilteredData: boolean = false; // Show or hide columns
 
   @Output() rowClicked: EventEmitter<T> = new EventEmitter<T>();
   @Output() cellClicked: EventEmitter<DynamicTableCellClickResult> = new EventEmitter<DynamicTableCellClickResult>();
 
   @Output() selectedRows: EventEmitter<T[]> = new EventEmitter<T[]>();
+  @Output() filterResult: EventEmitter<T[]> = new EventEmitter<T[]>();
 
   // @ViewChild(MatTable) table: MatTable<T>;
 
@@ -92,7 +94,7 @@ export class DynamicTableComponent<T> implements OnInit, OnChanges, AfterViewIni
   // The hidden columns filtered out
   columnsToShow = new FormControl();
 
-  filterKeyUp: BehaviorSubject<string> = new BehaviorSubject('');
+  filterKeyUp$: ReplaySubject<string> = new ReplaySubject();
 
   // Default sort column definition
   sortActive: string;
@@ -116,22 +118,17 @@ export class DynamicTableComponent<T> implements OnInit, OnChanges, AfterViewIni
     }
 
     if (changes.tableData.currentValue) {
-      // TODO: Test this default sort change
-      // if (this.sortActive) {
-      //   this.dataSource.data = this.tableData.sort((a, b) => (_get(a, this.sortActive) > _get(b, this.sortActive)) ? this.sortDirection === 'asc' ? 1 : -1 : ((_get(b, this.sortActive) > _get(a, this.sortActive)) ? this.sortDirection === 'asc' ? -1 : 1 : 0));
-      // } else {
-      //   this.dataSource.data = this.tableData;
-      // }
       // Clear selection if new data is comming in
       this.selection.clear();
 
       this.dataSource.data = this.tableData;
       this.updateColumnTotals();
+      this.getFilteredData(this.tableData);
     }
   }
 
   ngAfterViewInit(): void {
-    this.filterKeyUp.pipe(debounce(() => interval(2000))).subscribe(filterValue => {
+    this.filterKeyUp$.pipe(debounce(() => interval(2000))).subscribe(filterValue => {
       this.searchLoading = false;
       // apply the filter after 2 seconds
       this.dataSource.filter = filterValue;
@@ -140,6 +137,10 @@ export class DynamicTableComponent<T> implements OnInit, OnChanges, AfterViewIni
       }
       // update totals
       this.updateColumnTotals();
+      // If the flag is set, emit the filtered data
+      if (this.emitFilteredData) {
+        this.getFilteredData();
+      }
     });
     this.dataSource.sort = this.sort;
     this.dataSource.paginator = this.paginator;
@@ -286,7 +287,7 @@ export class DynamicTableComponent<T> implements OnInit, OnChanges, AfterViewIni
       else
         filterString = newTerm;
     })
-    this.filterKeyUp.next(filterString);
+    this.filterKeyUp$.next(filterString);
   }
 
   applyColumnFilter(element: any, column: any, columnTitle: string, searchType: '=' | '!=' | '>=' | '<=' | 'empty'): void {
@@ -388,15 +389,28 @@ export class DynamicTableComponent<T> implements OnInit, OnChanges, AfterViewIni
     this.xlsxExportService.exportExcel(this.exportData, this.xlsxHeaders, this.fileName ? this.fileName : 'Export');
   }
 
-  formatExportData(): void {
+  getFilteredData(data?: T[]): void {
+    this.cloneData(data);
+    this.filterResult.emit(this.exportData);
+  }
+
+  cloneData(data?: T[]): void {
     // Format dates for exporting, temp
     if (this.selection.hasValue()) {
       // Export selected data
       this.exportData = this.selection.selected.map(a => cloneDeep(a));
-    } else {
+    } else if (data) {
+      // Export filtered data and sorted
+      this.exportData = data.map(a => cloneDeep(a));
+    }
+    else {
       // Export filtered data and sorted
       this.exportData = this.dataSource.sortData(this.dataSource.filteredData, this.dataSource.sort).map(a => cloneDeep(a));
     }
+  }
+
+  formatExportData(): void {
+    this.cloneData();
     // If the columns contain a date
     let dateColumns = this.columnsToShow.value.filter(e => e.type === 'date')
     if (dateColumns && dateColumns.length > 0) {
