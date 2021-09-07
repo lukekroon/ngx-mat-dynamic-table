@@ -42,6 +42,10 @@
   white-space: nowrap;
 }
 
+.mat-table {
+  width: 100%;
+}
+
 // Need sticky header and sticky scroll bar
 @media screen and (min-width: 550px) {
   .table-container {

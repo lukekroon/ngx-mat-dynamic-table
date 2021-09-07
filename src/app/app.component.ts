@@ -20,7 +20,7 @@ export class AppComponent implements OnInit {
       columnDef: 'fullName',
       columnTitle: 'Full Name',
       search: true,
-      sticky: true
+      // sticky: true
     },
     {
       columnDef: 'number',
@@ -80,7 +80,7 @@ export class AppComponent implements OnInit {
       total: true,
       average: true,
       search: true,
-      stickyEnd: true,
+      // stickyEnd: true,
       sort: 'desc',
       cellClassKey: 'netWorthClass'
     }

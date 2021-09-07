@@ -9,10 +9,11 @@ import { FormControl } from '@angular/forms';
 import { MatSelectChange } from '@angular/material/select';
 import { XlsxExportService } from '../xlsx-table-export/service/xlsx-export.service';
 import { get as _get, set as _set, cloneDeep } from 'lodash';
-import { interval, ReplaySubject, Subject } from 'rxjs';
-import { debounce } from 'rxjs/operators';
+import { interval, Observable, ReplaySubject, Subject } from 'rxjs';
+import { debounce, map, shareReplay, tap } from 'rxjs/operators';
 import { SearchTerm } from '../table-search-input/table-search-input.component';
 import { ColumnStorageService, ColumnStorage } from '../services/column-storage.service';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 
 export interface DynamicTableColumnDefinition extends DynamicTableColumn {
   columnDef: string,
@@ -107,7 +108,14 @@ export class DynamicTableComponent<T> implements OnInit, OnChanges, AfterViewIni
 
   savedColumnsLoading: boolean;
 
+  isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset)
+    .pipe(
+      map(result => result.matches),
+      shareReplay()
+    );
+
   constructor(@Inject(LOCALE_ID) private locale: string,
+    private breakpointObserver: BreakpointObserver,
     private xlsxExportService: XlsxExportService,
     private columnStorageService: ColumnStorageService) { }
 
