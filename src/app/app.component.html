@@ -1,20 +1,35 @@
-<div fxLayout="row" fxLayoutAlign="center start" style="height: 100%; padding: 15px;">
-  <mat-card fxFlex.lt-md="100" fxFlex.md="90" fxFlex.gt-md="85">
-    <mat-card-header>
-      <mat-card-title>Dynamic Table</mat-card-title>
-      <mat-card-subtitle>Demo</mat-card-subtitle>
-    </mat-card-header>
-    <mat-card-content>
-      <span fxLayout="row">
-        <span class="mat-h2">Multiple Select</span>
-        <span fxFlex></span>
-        <button mat-flat-button color="primary" (click)="getData()">New Data</button>
-      </span>
-      <ngx-mat-dynamic-table-container [tableId]="tableId" [tableData$]="data$" [columns]="columns" filter="true"
-        export="true" (rowClicked)="rowData($event)" rowClick="true" (cellClicked)="cellData($event)" cellClick="true"
-        fileName="Test" optionalColumns="true" [multiple]="true" (selectedRows)="selectedRows($event)" [emitFilteredData]="true"
-        [pageSizeOptions]="[15, 30, 60]" (filterResult)="filterResult($event)">
-      </ngx-mat-dynamic-table-container>
-    </mat-card-content>
-  </mat-card>
+<div class="show-fullscreen">
+  <div  fxLayout="row" fxLayoutAlign="center start" style="height: 100%; padding: 15px;">
+    <mat-card fxFlex.lt-md="100" fxFlex.md="90" fxFlex.gt-md="85">
+      <mat-card-header>
+        <mat-card-title>Dynamic Table</mat-card-title>
+        <mat-card-subtitle>Demo</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <span fxLayout="row">
+          <span class="mat-h2">Multiple Select</span>
+          <span fxFlex></span>
+          <button mat-flat-button color="primary" (click)="getData()">New Data</button>
+        </span>
+        <ngx-mat-dynamic-table-container [tableId]="tableId" [tableData$]="data$" [columns]="columns" filter="true"
+          export="true" (rowClicked)="rowData($event)" rowClick="true" (cellClicked)="cellData($event)" cellClick="true"
+          fileName="Test" optionalColumns="true" [multiple]="true" (selectedRows)="selectedRows($event)" [emitFilteredData]="true"
+          [pageSizeOptions]="[15, 30, 60]" (filterResult)="filterResult($event)">
+        </ngx-mat-dynamic-table-container>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
+<div class="show-mobile">
+    <mat-toolbar>
+      <button mat-icon-button class="example-icon" aria-label="Example icon-button with menu icon">
+          <mat-icon>menu</mat-icon>
+      </button>
+      <span>Demo Table</span>
+      <span class="example-spacer"></span>
+      <button mat-icon-button class="example-icon favorite-icon" aria-label="Example icon-button with heart icon">
+        <mat-icon>filter_list</mat-icon>
+      </button>
+  </mat-toolbar>
+  <ngx-mat-dynamic-mobile-container [tableData$]="data$"></ngx-mat-dynamic-mobile-container>
 </div>

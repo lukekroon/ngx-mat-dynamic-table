@@ -25,6 +25,10 @@ import { MatChipsModule } from '@angular/material/chips';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { XlsxExportService } from './components/xlsx-table-export/service/xlsx-export.service';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { DynamicMobileContainerComponent } from './components/dynamic-mobile-container/dynamic-mobile-container.component';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatCardModule } from '@angular/material/card';
+
 
 
 @NgModule({
@@ -34,7 +38,8 @@ import { MatButtonToggleModule } from '@angular/material/button-toggle';
     DynamicTableContainerComponent,
     XlsxTableExportComponent,
     LodashGetPipe,
-    TableSearchInputComponent
+    TableSearchInputComponent,
+    DynamicMobileContainerComponent
   ],
   imports: [
     CommonModule,
@@ -56,13 +61,16 @@ import { MatButtonToggleModule } from '@angular/material/button-toggle';
     MatProgressSpinnerModule,
     MatChipsModule,
     DragDropModule,
-    MatButtonToggleModule
+    MatButtonToggleModule,
+    MatToolbarModule,
+    MatCardModule
   ],
   providers: [XlsxExportService],
   exports: [
     DynamicTableComponent,
     DynamicTableContainerComponent,
-    XlsxTableExportComponent
+    XlsxTableExportComponent,
+    DynamicMobileContainerComponent
   ]
 })
 export class NgxMatDynamicTableModule { }
