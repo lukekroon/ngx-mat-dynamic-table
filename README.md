@@ -137,3 +137,23 @@ For more examples run the demo application.
 
 1. Build the library with `ng build ngx-mat-dynamic-table`.
 2. From your own project, run `npm install /path/to/library/dist`.
+
+## NPM
+
+Log in with NPM
+
+`npm login`
+
+Build the library `ng build ngx-mat-dynamic-table --prod`
+
+Publish
+
+`cd dist/ngx-mat-dynamic-table`
+
+For beta
+
+`npm publish --tag beta`
+
+For latest
+
+`npm publish`
