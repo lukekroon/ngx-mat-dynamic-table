@@ -110,7 +110,10 @@
                     </span>
                     <!-- Text Columns -->
                     <span *ngSwitchDefault>
-                        {{ row | lodashGet: column.columnDef }}
+                        <ng-container *ngIf="column.template; else defaultSpan">
+                          <ng-container *ngTemplateOutlet="column.template; context: { row: row, cell: row | lodashGet: column.columnDef }"></ng-container>
+                        </ng-container>
+                        <ng-template #defaultSpan>{{ row | lodashGet: column.columnDef }}</ng-template>
                     </span>
                 </ng-container>
             </td>

@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter, ViewChild, Inject, LOCALE_ID, SimpleChanges, OnChanges, AfterViewInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ViewChild, Inject, LOCALE_ID, SimpleChanges, OnChanges, AfterViewInit, ChangeDetectionStrategy, TemplateRef } from '@angular/core';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { MatSort, MatSortable, Sort, SortDirection } from '@angular/material/sort';
 import { MatPaginator } from '@angular/material/paginator';
@@ -28,12 +28,13 @@ export interface DynamicTableColumnDefinition extends DynamicTableColumn {
   sort?: 'asc' | 'desc'; // asc of desc, default sort
   dateFormat?: string; // for dates
   hidden?: boolean; // Hide this column
-  ignoreSave?: boolean; // If set, this column will not be saved in indexeddb, intended for dynamic date columns etc. 
+  ignoreSave?: boolean; // If set, this column will not be saved in indexeddb, intended for dynamic date columns etc.
   cellClassKey?: string; // Apply a class to a cell
   unit?: { // add unit strings to numbers
     key: string //json key for the unit string
     position: 'before' | 'after'; // Before or after
-  }
+  },
+  template?: TemplateRef<any>;
 }
 
 // For calculations

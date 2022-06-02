@@ -50,6 +50,7 @@ export class DataService {
         name: Math.random().toString(36).substr(2, 10),
         surname: Math.random().toString(36).substr(2, 10),
         number: `+27${(Math.floor(Math.random() * 90000000) + 10000000).toString()}`,
+        number2: Math.round(Math.random() * 10000),
         signupDate: new Date(+(new Date()) - Math.floor(Math.random() * 1000000000000)),
         subscribed: Math.random() >= 0.5,
         money: {

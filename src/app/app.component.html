@@ -18,3 +18,14 @@
     </mat-card-content>
   </mat-card>
 </div>
+
+<ng-template #columnWithRowContext let-row="row">
+  {{ row.name }}____{{ row.surname }}
+</ng-template>
+
+<ng-template #columnWithCellContext let-cell="cell">
+  <span [style.color]="cell > 5000 ? 'green' : 'red'">
+    <mat-icon>{{ cell > 5000 ? 'trending_up' : 'trending_down'}}</mat-icon>
+    <span>{{ cell }}</span>
+  </span>
+</ng-template>
