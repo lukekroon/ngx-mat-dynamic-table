@@ -75,6 +75,38 @@ In the HTML add the selector:
         (selectedRows)="selectedRows($event)" [pageSizeOptions]="[15, 30, 60]"></ngx-mat-dynamic-table-container>
 ```
 
+Custom templates 
+After defining your template, add it to the columns' definition.
+
+```angular2html
+<ng-template #columnWithCellContext let-cell="cell">
+  <span [style.color]="cell > 5000 ? 'green' : 'red'">
+    <mat-icon>{{ cell > 5000 ? 'trending_up' : 'trending_down'}}</mat-icon>
+    <span>{{ cell }}</span>
+  </span>
+</ng-template>
+```
+
+```typescript
+
+    @ViewChild('columnWithRowContext') private _rowContextTemplate: TemplateRef<any>;
+
+    ...
+    {
+      columnDef: 'name',
+      columnTitle: 'Name',
+      search: true,
+      template: this._rowContextTemplate
+    }
+    ...
+```
+
+Allowable contexts.
+```
+let-cell="cell"
+let-row="row"
+```
+
 Inputs:
 
 `tableData$` = Table data in observable
