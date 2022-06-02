@@ -467,7 +467,8 @@ export class DynamicTableComponent<T> implements OnInit, OnChanges, AfterViewIni
     this.columnsToShow.setValue(this.columns.filter(c => saved.visibleColumns.some(item => item === c.columnDef)));
     // If multiple is enabled but was not saved in the saved array, add it
     if (this.multiple && saved.visibleColumns[0] !== 'select') saved.visibleColumns.unshift('select');
-    this.displayedColumns = saved.visibleColumns;
+    // Only show the saved column if it is still in the @input() column array
+    this.displayedColumns = this.columns.filter(c => saved.visibleColumns.some(item => item === c.columnDef)).map(c => c.columnDef);
   }
 
   saveCurrentColumnSelection(displayedColumns: string[]): void {
