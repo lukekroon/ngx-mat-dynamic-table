@@ -1,6 +1,6 @@
 {
   "name": "ngx-mat-dynamic-table",
-  "version": "11.1.2-beta.1",
+  "version": "11.1.2-beta.3",
   "description": "Dynamic material table table.",
   "author": "Luke Kroon",
   "repository": {
@@ -25,7 +25,6 @@
     "@angular/cdk": ">=9.0.0",
     "@angular/forms": ">=9.0.0",
     "@angular/material": ">=9.0.0",
-    "@angular/flex-layout": ">=9.0.0",
     "hammerjs": ">=2.0.0",
     "rxjs": ">=6.4.0",
     "xlsx": ">=0.15",
